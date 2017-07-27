@@ -13,7 +13,7 @@ import joinery.DataFrame;
  */
 public class MainClass 
 {
-    public static void main( String[] args )
+    public static void main( String[] args ) throws IOException
     {
     
     	BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
