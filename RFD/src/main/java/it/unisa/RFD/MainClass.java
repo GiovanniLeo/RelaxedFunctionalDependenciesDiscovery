@@ -16,9 +16,9 @@ public class MainClass
     public static void main( String[] args ) throws IOException
     {
     
-    	BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-    	String nameCSV,separatorCSV,headingCSV,nullCharacterCSV;
-    	DataFrame<Object> df;
+    		BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+    		String nameCSV,separatorCSV,headingCSV,nullCharacterCSV;
+    		DataFrame<Object> df;
     
     	
   
@@ -34,14 +34,11 @@ public class MainClass
         System.out.println("The null character");
         nullCharacterCSV=console.readLine();
         
-        if(headingCSV.equals("Y"))
+        if(headingCSV.equalsIgnoreCase("y"))
             df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,true);
         else
-        	df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
-     
-        
-    
-	    
+        		df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
+     	    
         
         //DistanceMatrix.createMatrix(df);
      
