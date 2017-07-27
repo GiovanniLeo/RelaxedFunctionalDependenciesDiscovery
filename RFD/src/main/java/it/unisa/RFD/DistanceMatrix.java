@@ -31,9 +31,9 @@ public class DistanceMatrix
 		DataFrame<Object> df=DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
 		typesColumn=df.types();
 		return  df;
-
+		
 	}
-
+	
 	/**
 	 * Metodo che cerca tipo di elemento colonna e restituisce istanza dell'interfaccia per la sottrazione
 	 * @param indiceColonna
@@ -41,33 +41,33 @@ public class DistanceMatrix
 	 */
 	private static Subtraction checkTypes(int indiceColonna)
 	{
-
+		
 		Class<?> classType=typesColumn.get(indiceColonna);
-
+		
 		Subtraction sottrazione=null;
-
+		
 		switch (classType.getSimpleName()) 
 		{
 		case "String":
-
+			
 			break;
-
+			
 		case "Long":
-
+			
 			sottrazione=new IntAbsoluteSubtraction();
 			break;
-
+			
 		case "Date":
-
-
+			
+			
 			break;
 
 		default:
 			break;
 		}
-
+		
 		return sottrazione;
-
+		
 	}
 	/**
 	 * @param df dataFrame in input
@@ -91,32 +91,27 @@ public class DistanceMatrix
 		DataFrame<Object> distanceMatrix = df.dropna();
 		distanceMatrix = distanceMatrix.slice(0,0);
 		distanceMatrix = distanceMatrix.add("Id");
-
+		
 		for (int i = 0; i < rowNumber; i++) 
 		{
 			for (int j=i+1; j < rowNumber; j++) 
 			{
-
+				
 				ArrayList<Object> list = new ArrayList<>();
-
+			
 				for (int x = 0; x < colNumber; x++)
 				{
 					Subtraction sub = DistanceMatrix.checkTypes(x);
-					int result = sub.subtracion(df.get(i, x),df.get(j, x));
-					if(result != -1)
-					{
-						list.add(result);
-					}
+					list.add(sub.subtracion(df.get(i, x), df.get(j, x)));
 				}
-				
 				list.add(new Tuple<Integer,Integer>(i,j));
 				distanceMatrix.append(list);
 			}
-
+			
 		}
 
 		return distanceMatrix;
 	} 
-
+	
 
 }

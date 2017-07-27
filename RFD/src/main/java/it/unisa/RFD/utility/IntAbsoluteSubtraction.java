@@ -20,10 +20,6 @@ public class IntAbsoluteSubtraction implements Subtraction{
 	 * @return La differenza assoluta fra i due numeri
 	 */
 	public int subtracion(Object firstElement, Object secondElement) {
-		
-		if(firstElement == null || secondElement == null)
-			return -1;
-		
 		if((firstElement instanceof Integer 
 				|| firstElement instanceof Long 
 				|| firstElement instanceof Double
@@ -35,8 +31,7 @@ public class IntAbsoluteSubtraction implements Subtraction{
 				{
 			Number first = (Number) firstElement;
 			Number second = (Number) secondElement;
-			
-				
+					
 			return Math.abs(Math.abs(first.intValue()) - Math.abs(second.intValue()));
 		}
 		else{
