@@ -3,6 +3,8 @@ package it.unisa.RFD;
 import java.io.IOException;
 import java.util.List;
 
+import it.unisa.RFD.utility.IntAbsoluteSubtraction;
+import it.unisa.RFD.utility.Subtraction;
 import joinery.DataFrame;
 /**
  * Classe che provvede alla creazione della matrice delle distanze partendo da un dataframe caricato da file csv
@@ -11,7 +13,7 @@ import joinery.DataFrame;
  */
 public class DistanceMatrix 
 {
-	private List<Class<?>> typesColumn;
+	static private List<Class<?>> typesColumn;
 	/**
 	 * Metodo che riceve in input nome del file csv e lo carica in un DataFrame
 	 * @param nameCSV nome file CSV
@@ -23,8 +25,9 @@ public class DistanceMatrix
 	 */
 	public static DataFrame<Object> loadDF(String nameCSV,String separator,String naString,boolean hasHeader) throws IOException
 	{
-		
-		return DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
+		DataFrame<Object> df=DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
+		typesColumn=df.types();
+		return  df;
 		
 	}
 	
@@ -33,8 +36,34 @@ public class DistanceMatrix
 	 * @param indiceColonna
 	 * @return Subtraction istanza dell'interfaccia per la sottrazione
 	 */
-	private void checkTypes(int indiceColonna)
+	private Subtraction checkTypes(int indiceColonna)
 	{
+		
+		Class<?> classType=typesColumn.get(indiceColonna);
+		
+		Subtraction sottrazione=null;
+		
+		switch (classType.getSimpleName()) 
+		{
+		case "String":
+			
+			break;
+			
+		case "Long":
+			
+			sottrazione=new IntAbsoluteSubtraction();
+			break;
+			
+		case "Date":
+			
+			
+			break;
+
+		default:
+			break;
+		}
+		
+		return sottrazione;
 		
 	}
 	
