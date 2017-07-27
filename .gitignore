@@ -4,5 +4,6 @@
 
 \.project
 
-
 RFD/\.settings/
+
+RFD/\.settings/org\.eclipse\.jdt\.core\.prefs 
