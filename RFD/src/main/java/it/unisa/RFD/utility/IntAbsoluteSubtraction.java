@@ -1,0 +1,40 @@
+package it.unisa.RFD.utility;
+
+public class IntAbsoluteSubtraction implements Subtraction{
+	/*
+	 * La classe astratta Number è la superclasse di  BigDecimal, BigInteger, Byte, Double, 
+	 * Float, Integer,Long,e Short.
+	 * La suddetta classe ha dei metodi per convertire i valori numerici rappresentati in 
+	 * byte, double, float, int, long, and short.
+	 */
+	public int subtracion(Object firstElement, Object secondElement) {
+		if((firstElement instanceof Integer 
+				|| firstElement instanceof Long 
+				|| firstElement instanceof Double
+				|| firstElement instanceof Float) 
+				&& (secondElement instanceof Integer
+						|| secondElement instanceof Long
+						|| secondElement instanceof Double
+						|| secondElement instanceof Float))
+				{
+			Number first = (Number) firstElement;
+			Number second = (Number) secondElement;
+			
+			return Math.abs(Math.abs(first.intValue()) - Math.abs(second.intValue()));
+		}
+		else{
+			throw new IllegalArgumentException("Expected a numeric element/s");
+		}
+
+	}
+	
+	
+	public static void main(String[] args) {
+		IntAbsoluteSubtraction abs = new IntAbsoluteSubtraction();
+		String i = "200";
+		long j = 200;
+		 System.out.println(abs.subtracion(i,j));
+		
+	}
+
+}
