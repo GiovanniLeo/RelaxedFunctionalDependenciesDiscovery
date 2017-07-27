@@ -1,10 +1,13 @@
 package it.unisa.RFD;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
 import it.unisa.RFD.utility.Subtraction;
+import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
 /**
  * Classe che provvede alla creazione della matrice delle distanze partendo da un dataframe caricato da file csv
@@ -28,44 +31,92 @@ public class DistanceMatrix
 		DataFrame<Object> df=DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
 		typesColumn=df.types();
 		return  df;
-		
+
 	}
-	
+
 	/**
 	 * Metodo che cerca tipo di elemento colonna e restituisce istanza dell'interfaccia per la sottrazione
 	 * @param indiceColonna
 	 * @return Subtraction istanza dell'interfaccia per la sottrazione
 	 */
-	private Subtraction checkTypes(int indiceColonna)
+	private static Subtraction checkTypes(int indiceColonna)
 	{
-		
+
 		Class<?> classType=typesColumn.get(indiceColonna);
-		
+
 		Subtraction sottrazione=null;
-		
+
 		switch (classType.getSimpleName()) 
 		{
 		case "String":
-			
+
 			break;
-			
+
 		case "Long":
-			
+
 			sottrazione=new IntAbsoluteSubtraction();
 			break;
-			
+
 		case "Date":
-			
-			
+
+
 			break;
 
 		default:
 			break;
 		}
-		
+
 		return sottrazione;
-		
+
 	}
-	
+	/**
+	 * @param df dataFrame in input
+	 * @return Matrice Delle Distanze
+	 * Otteniamo il numero di righe e di colonne.
+	 * Copiamo il dataframe preso in input in una variabile distanceMatrix, attraverso slice otteniamo
+	 * l'header e aggiungiamo la colonna id.
+	 * Il primo for fissa il primo elemento della Tupla, il secondo for
+	 * fissa il secondo elemento della tupla che  verra' incrementato ad ogni iterazione finchè non
+	 * ci sono altri elementi.
+	 * Il terzo for seleziona la colonna, ottenendo un confronto tra gli elementi della riga i e della
+	 * riga j nella medesima colonna.
+	 * Il risultato viene inserito in una lista che, insieme agli indici delle righe confrontate,
+	 * viene inserito nel nuovo dataframe. 
+	 */
+	public static DataFrame<Object> createMatrix(DataFrame<Object> df)
+	{
+		int colNumber = df.size();
+		int rowNumber = df.length();
+
+		DataFrame<Object> distanceMatrix = df.dropna();
+		distanceMatrix = distanceMatrix.slice(0,0);
+		distanceMatrix = distanceMatrix.add("Id");
+
+		for (int i = 0; i < rowNumber; i++) 
+		{
+			for (int j=i+1; j < rowNumber; j++) 
+			{
+
+				ArrayList<Object> list = new ArrayList<>();
+
+				for (int x = 0; x < colNumber; x++)
+				{
+					Subtraction sub = DistanceMatrix.checkTypes(x);
+					int result = sub.subtracion(df.get(i, x),df.get(j, x));
+					if(result != -1)
+					{
+						list.add(result);
+					}
+				}
+				
+				list.add(new Tuple<Integer,Integer>(i,j));
+				distanceMatrix.append(list);
+			}
+
+		}
+
+		return distanceMatrix;
+	} 
+
 
 }
