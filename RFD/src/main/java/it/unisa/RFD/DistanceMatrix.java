@@ -1,5 +1,6 @@
 package it.unisa.RFD;
 
+import java.io.IOException;
 import java.util.List;
 
 import joinery.DataFrame;
@@ -14,13 +15,17 @@ public class DistanceMatrix
 	/**
 	 * Metodo che riceve in input nome del file csv e lo carica in un DataFrame
 	 * @param nameCSV nome file CSV
-	 * @param separetor separatore di colonne utilizzato nel file
+	 * @param separator separatore di colonne utilizzato nel file
+	 * @param naString stringa nulla
 	 * @param hasHeader presenza di header nel file
 	 * @return Dataframe  DataFrame caricato da file
+	 * @throws IOException 
 	 */
-	public static DataFrame<Object> loadDF(String nameCSV,String separetor,boolean hasHeader)
+	public static DataFrame<Object> loadDF(String nameCSV,String separator,String naString,boolean hasHeader) throws IOException
 	{
-		return new DataFrame();
+		
+		return DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
+		
 	}
 	
 	/**
