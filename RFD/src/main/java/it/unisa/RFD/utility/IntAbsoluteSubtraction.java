@@ -7,6 +7,18 @@ public class IntAbsoluteSubtraction implements Subtraction{
 	 * La suddetta classe ha dei metodi per convertire i valori numerici rappresentati in 
 	 * byte, double, float, int, long, and short.
 	 */
+	
+	/**
+	 * @param firstElement primo elemento della sottrazione
+	 * @param secondElement secondo elemento della  sottrazione
+	 * 
+	 * Il metodo calcola la differenza assoluta fra due numeri gli elementi essendo 
+	 * Object vengono prima controllati e se non sono un elemento numerico viene
+	 * lanciata una eccezione.
+	 * Se gli elementi superano il controllo vengono
+	 * castati a Numeric e in seguito viene estratto il valore intero.
+	 * @return La differenza assoluta fra i due numeri
+	 */
 	public int subtracion(Object firstElement, Object secondElement) {
 		if((firstElement instanceof Integer 
 				|| firstElement instanceof Long 
@@ -29,12 +41,12 @@ public class IntAbsoluteSubtraction implements Subtraction{
 	}
 	
 	
-	public static void main(String[] args) {
-		IntAbsoluteSubtraction abs = new IntAbsoluteSubtraction();
-		String i = "200";
-		long j = 200;
-		 System.out.println(abs.subtracion(i,j));
-		
-	}
+//	public static void main(String[] args) {
+//		IntAbsoluteSubtraction abs = new IntAbsoluteSubtraction();
+//		String i = "200";
+//		long j = 200;
+//		 System.out.println(abs.subtracion(i,j));
+//		
+//}
 
 }
