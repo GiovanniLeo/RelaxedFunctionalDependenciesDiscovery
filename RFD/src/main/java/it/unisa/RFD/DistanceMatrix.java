@@ -2,8 +2,11 @@ package it.unisa.RFD;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
 import it.unisa.RFD.utility.Subtraction;
@@ -95,6 +98,8 @@ public class DistanceMatrix
 	 */
 	public static DataFrame<Object> createMatrix(DataFrame<Object> df)
 	{
+		Object[] indiciValidi=df.index().toArray();
+		
 		int colNumber = df.size();
 		int rowNumber = df.length();
 
@@ -102,7 +107,7 @@ public class DistanceMatrix
 		distanceMatrix = distanceMatrix.slice(0,0);
 		distanceMatrix = distanceMatrix.add("Id");
 		
-		for (int i = 0; i < rowNumber; i++) 
+		for (int i = 0; i < rowNumber; i++)
 		{
 			for (int j=i+1; j < rowNumber; j++) 
 			{
@@ -125,7 +130,7 @@ public class DistanceMatrix
 					}
 					
 				}
-				list.add(new Tuple<Integer,Integer>(i,j));
+				list.add(new Tuple<Object,Object>(indiciValidi[i],indiciValidi[j]));
 				distanceMatrix.append(list);
 			}
 			
