@@ -2,6 +2,8 @@ package it.unisa.RFD.actors;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import it.unisa.RFD.DistanceMatrix;
 import it.unisa.RFD.actors.MainActor.ConcurrenceDistanceMatrix;
 import it.unisa.RFD.actors.MainActor.ReceivePartDM;
@@ -13,6 +15,7 @@ import joinery.DataFrame;
  */
 public class ConcurrentDMActor extends AbstractActor 
 {
+	private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	
 	public ConcurrentDMActor() 
 	{
@@ -32,6 +35,20 @@ public class ConcurrentDMActor extends AbstractActor
 			this.df=dataFrame;
 		}
 	}
+	
+	@Override
+	public void preStart() throws Exception 
+	{
+		log.info("Sono vivo");
+		super.postStop();
+	}
+
+	@Override
+	public void postStop() throws Exception 
+	{
+		log.info("Sono morto");
+		super.postStop();
+	}
 
 	@Override
 	public Receive createReceive() 
@@ -39,6 +56,7 @@ public class ConcurrentDMActor extends AbstractActor
 		return receiveBuilder()
 				.match(CreateConcurrentDM.class, c->
 				{
+					
 					this.getSender().tell(new ReceivePartDM(DistanceMatrix.createMatrix(c.df)), this.getSelf());
 					
 				}).build();

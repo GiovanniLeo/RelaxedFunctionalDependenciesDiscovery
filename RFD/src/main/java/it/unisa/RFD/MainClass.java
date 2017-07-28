@@ -37,17 +37,18 @@ public class MainClass
 //		        else
 //		        		df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
-		df = DistanceMatrix.loadDF("hepatitis.csv",",","?",true);   
+		df = DistanceMatrix.loadDF("first_dataset.csv",",","?",true);   
 
 //		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
 //		System.out.println(dm.toString());
 		
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
 		try 
 		{
-			ActorRef act=system.actorOf(MainActor.props(df));
-			//act.tell(new ConcurrenceDistanceMatrix(system,4), ActorRef.noSender());
-			
+			ActorRef act=system.actorOf(MainActor.props(df),"AttorePrincipale");
+			act.tell(new MainActor.ConcurrenceDistanceMatrix(system, 4), ActorRef.noSender());
+			System.out.println(">>> Press ENTER to exit <<<");
+		    System.in.read();
 		} 
 		catch (Exception e) 
 		{

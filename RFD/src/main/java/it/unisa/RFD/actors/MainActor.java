@@ -4,6 +4,8 @@ import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import it.unisa.RFD.actors.ConcurrentDMActor.CreateConcurrentDM;
 import joinery.DataFrame;
 /**
@@ -13,8 +15,13 @@ import joinery.DataFrame;
  */
 public class MainActor extends AbstractActor
 {
+
+
+	private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	private DataFrame<Object> df;
 	private DataFrame<Object> completeDM;
+	
+	
 	
 	public MainActor(DataFrame<Object> dataFrame)
 	{
@@ -28,6 +35,20 @@ public class MainActor extends AbstractActor
 	static public Props props(DataFrame<Object> dataFrame)
 	{
 		return Props.create(MainActor.class,()->new MainActor(dataFrame));
+	}
+	
+	@Override
+	public void preStart() throws Exception 
+	{
+		log.info("Sono vivo");
+		super.postStop();
+	}
+
+	@Override
+	public void postStop() throws Exception 
+	{
+		log.info("Sono morto");
+		super.postStop();
 	}
 	
 	static public class ConcurrenceDistanceMatrix
@@ -57,6 +78,14 @@ public class MainActor extends AbstractActor
 		}
 	}
 	
+	static public class TestMessage
+	{
+		
+		public TestMessage()
+		{
+		}
+	}
+	
 	@Override
 	public Receive createReceive() 
 	{
@@ -71,16 +100,21 @@ public class MainActor extends AbstractActor
 					{
 						if(i<c.threadNr-1)
 						{
+							
+							
 							ActorRef actor=c.actSystem.actorOf(ConcurrentDMActor.props());
-							actor.tell(new CreateConcurrentDM(this.df.slice(inizioCorrente, inizioCorrente+dimension)), this.getSender());
+							actor.tell(new CreateConcurrentDM(this.df.slice(inizioCorrente, inizioCorrente+dimension)), this.getSelf());
 							
 							inizioCorrente+=dimension;
 						}
 						else
 						{
+							
+							
 							ActorRef actor=c.actSystem.actorOf(ConcurrentDMActor.props());
 							actor.tell(new CreateConcurrentDM(this.df.slice(inizioCorrente, inizioCorrente+dimension+lastStep)), 
-									this.getSender());
+									this.getSelf());
+							
 						}
 					}
 					
@@ -88,6 +122,11 @@ public class MainActor extends AbstractActor
 				.match(ReceivePartDM.class, r->
 				{
 					System.out.println(r.partialDM.toString());
+					
+				})
+				.match(TestMessage.class, t->
+				{
+					log.info("ciao");
 					
 				}).build();
 	}
