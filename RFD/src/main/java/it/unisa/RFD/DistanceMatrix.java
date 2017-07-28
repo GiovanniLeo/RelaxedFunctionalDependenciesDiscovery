@@ -76,7 +76,7 @@ public class DistanceMatrix
 	 * Copiamo il dataframe preso in input in una variabile distanceMatrix, attraverso slice otteniamo
 	 * l'header e aggiungiamo la colonna id.
 	 * Il primo for fissa il primo elemento della Tupla, il secondo for
-	 * fissa il secondo elemento della tupla che  verra' incrementato ad ogni iterazione finchè non
+	 * fissa il secondo elemento della tupla che  verra' incrementato ad ogni iterazione finchï¿½ non
 	 * ci sono altri elementi.
 	 * Il terzo for seleziona la colonna, ottenendo un confronto tra gli elementi della riga i e della
 	 * riga j nella medesima colonna.
@@ -102,7 +102,18 @@ public class DistanceMatrix
 				for (int x = 0; x < colNumber; x++)
 				{
 					Subtraction sub = DistanceMatrix.checkTypes(x);
-					list.add(sub.subtracion(df.get(i, x), df.get(j, x)));
+					
+					int subReturn=sub.subtracion(df.get(i, x), df.get(j, x));
+					
+					if(subReturn==-1)
+					{
+						list.add(null);
+					}
+					else
+					{
+						list.add(subReturn);
+					}
+					
 				}
 				list.add(new Tuple<Integer,Integer>(i,j));
 				distanceMatrix.append(list);

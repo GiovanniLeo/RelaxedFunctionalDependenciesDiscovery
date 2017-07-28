@@ -19,7 +19,13 @@ public class IntAbsoluteSubtraction implements Subtraction{
 	 * castati a Numeric e in seguito viene estratto il valore intero.
 	 * @return La differenza assoluta fra i due numeri
 	 */
-	public int subtracion(Object firstElement, Object secondElement) {
+	public int subtracion(Object firstElement, Object secondElement) 
+	{
+		if(firstElement==null || secondElement==null)
+		{
+			return -1;	
+		}
+		
 		if((firstElement instanceof Integer 
 				|| firstElement instanceof Long 
 				|| firstElement instanceof Double
