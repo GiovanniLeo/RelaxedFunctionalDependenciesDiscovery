@@ -3,9 +3,11 @@ package it.unisa.RFD;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import joinery.DataFrame;
+import it.unisa.RFD.actors.*;
 
 /**
  * 
@@ -35,12 +37,28 @@ public class MainClass
 //		        else
 //		        		df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
-		df = DistanceMatrix.loadDF("first_dataset.csv",",","?",true);   
+		df = DistanceMatrix.loadDF("hepatitis.csv",",","?",true);   
 
-		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
-		System.out.println(dm.toString());
+//		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
+//		System.out.println(dm.toString());
 		
-
+		ActorSystem system = ActorSystem.create();
+		try 
+		{
+			ActorRef act=system.actorOf(MainActor.props(df));
+			//act.tell(new ConcurrenceDistanceMatrix(system,4), ActorRef.noSender());
+			
+		} 
+		catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			system.terminate();
+		}
+		
 
 	}
 }
