@@ -29,7 +29,7 @@ public class DistanceMatrix
 	public static DataFrame<Object> loadDF(String nameCSV,String separator,String naString,boolean hasHeader) throws IOException
 	{
 		DataFrame<Object> df=DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
-		typesColumn=df.types();
+		typesColumn=df.dropna().types();
 		return  df;
 		
 	}
@@ -53,6 +53,16 @@ public class DistanceMatrix
 			break;
 			
 		case "Long":
+			
+			sottrazione=new IntAbsoluteSubtraction();
+			break;
+			
+		case "Double":
+			
+			sottrazione=new IntAbsoluteSubtraction();
+			break;
+			
+		case "Object":
 			
 			sottrazione=new IntAbsoluteSubtraction();
 			break;

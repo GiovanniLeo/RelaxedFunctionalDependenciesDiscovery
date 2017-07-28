@@ -38,7 +38,7 @@ public class IntAbsoluteSubtraction implements Subtraction{
 			Number first = (Number) firstElement;
 			Number second = (Number) secondElement;
 					
-			return Math.abs(Math.abs(first.intValue()) - Math.abs(second.intValue()));
+			return (int)Math.abs(Math.abs(first.intValue()) - Math.abs(second.intValue()));
 		}
 		else{
 			throw new IllegalArgumentException("Expected a numeric element/s");
