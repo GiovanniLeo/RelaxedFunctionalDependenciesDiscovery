@@ -145,24 +145,38 @@ public class DistanceMatrix
 		return distanceMatrix;
 	} 
 	
-	public static DataFrame<Object> concurrentCreateMatrix(DataFrame<Object> partialDF,DataFrame<Object> completeDF)
+	/**
+	 * @param inizio Indice di riga iniziale da confrontare
+	 * @param dimensione Indice di numero righe da confrontare
+	 * @param df dataFrame in input
+	 * @return Matrice Delle Distanze
+	 * Otteniamo il numero di righe e di colonne.
+	 * Copiamo il dataframe preso in input in una variabile distanceMatrix, attraverso slice otteniamo
+	 * l'header e aggiungiamo la colonna id.
+	 * Il primo for fissa il primo elemento della Tupla, il secondo for
+	 * fissa il secondo elemento della tupla che  verra' incrementato ad ogni iterazione finch� non
+	 * ci sono altri elementi.
+	 * Il terzo for seleziona la colonna, ottenendo un confronto tra gli elementi della riga i e della
+	 * riga j nella medesima colonna.
+	 * Il risultato viene inserito in una lista che, insieme agli indici delle righe confrontate,
+	 * viene inserito nel nuovo dataframe. 
+	 * Versione per la parallelizzazione.
+	 */
+	public static DataFrame<Object> concurrentCreateMatrix(int inizio,int dimensione,DataFrame<Object> completeDF)
 	{
 		long timerInizio=System.currentTimeMillis();
 		long timerFine;
 		
-		Object[] indiciValidi=partialDF.index().toArray();
-		
-		int colNumber = partialDF.size();
-		int rowNumberPartial = partialDF.length();
+		int colNumber = completeDF.size();
 		int rowNumberComplete = completeDF.length();
 
-		DataFrame<Object> distanceMatrix = partialDF.dropna();
+		DataFrame<Object> distanceMatrix = completeDF.dropna();
 		distanceMatrix = distanceMatrix.slice(0,0);
 		distanceMatrix = distanceMatrix.add("Id");
 		
-		for (int i = 0; i < rowNumberPartial; i++)
+		for (int i = inizio; i < inizio+dimensione; i++)
 		{
-			for (int j=(int)indiciValidi[i]+1; j < rowNumberComplete; j++) 
+			for (int j=i+1; j < rowNumberComplete; j++) 
 			{
 				
 				ArrayList<Object> list = new ArrayList<>();
@@ -183,7 +197,7 @@ public class DistanceMatrix
 					}
 					
 				}
-				list.add(new Tuple<Object,Object>(indiciValidi[i],j));
+				list.add(new Tuple<Object,Object>(i,j));
 				distanceMatrix.append(list);
 			}
 			

@@ -11,7 +11,7 @@ import akka.event.LoggingAdapter;
 import it.unisa.RFD.actors.ConcurrentDMActor.CreateConcurrentDM;
 import joinery.DataFrame;
 /**
- * 
+ * Attore principale che gestisce la parallelizzazione 
  * @author luigidurso
  *
  */
@@ -22,11 +22,17 @@ public class MainActor extends AbstractActor
 	private int countPart=0;
 	private DataFrame<Object> df;
 	private DataFrame<Object> completeDM;
-	static public int threadNr=4;
+	private int threadNr=2;
 	private long timerInizio,timerFine;
 	
 	
-	
+	/**
+	 * Costruttore Main actor che riceve un dataframe completo ed il numero di thread con cui si desidera eseguire il programma.
+	 * In fase di costruzione assegnamo le variabili di istanza e creiamo la nostra DM vuota.
+	 * 
+	 * @param dataFrame dataframe completo letto da file
+	 * @param threadNumber numero thread con cui si fa girare il programma...default:2
+	 */
 	public MainActor(DataFrame<Object> dataFrame,int threadNumber)
 	{
 		if(Runtime.getRuntime().availableProcessors()>=threadNumber)
@@ -35,7 +41,7 @@ public class MainActor extends AbstractActor
 		}
 		else
 		{
-			log.info("Numero thread inserito troppo grande...default:4");
+			log.info("Numero thread inserito troppo grande...default:2");
 		}
 		
 		this.df=dataFrame;
@@ -45,7 +51,12 @@ public class MainActor extends AbstractActor
 		this.completeDM=completeDM.add("Id");
 		
 	}
-	
+	/**
+	 * Metodo statico per istanziare MainActor
+	 * @param dataFrame
+	 * @param threadNumber
+	 * @return reference a MainActor
+	 */
 	static public Props props(DataFrame<Object> dataFrame,int threadNumber)
 	{
 		return Props.create(MainActor.class,()->new MainActor(dataFrame,threadNumber));
@@ -64,26 +75,35 @@ public class MainActor extends AbstractActor
 		log.info("Sono morto");
 		super.postStop();
 	}
-	
+	/**
+	 * Metodo per l'attesa del completamento della Distance Matrix.
+	 */
 	private void isDMComplete()
 	{
 		this.countPart++;
-		if(countPart==MainActor.threadNr)
+		if(countPart==this.threadNr)
 		{
 			this.timerFine=System.currentTimeMillis();
 			this.completeDM.show();
-			//System.out.println(this.completeDM.toString());
 			System.out.println("Concluso in tempo: "+(this.timerFine-this.timerInizio));
 		}
 	}
-	
+	/**
+	 * Messaggio per l'inizio della parallelizzazione della DM.
+	 * @author luigidurso
+	 *
+	 */
 	static public class ConcurrenceDistanceMatrix
 	{
 		public ConcurrenceDistanceMatrix()
 		{
 		}
 	}
-	
+	/**
+	 * Messaggio per la ricezione di parti della DM 
+	 * @author luigidurso
+	 *
+	 */
 	static public class ReceivePartDM
 	{
 		private DataFrame<Object> partialDM;
@@ -93,7 +113,11 @@ public class MainActor extends AbstractActor
 			this.partialDM=partialDM;
 		}
 	}
-	
+	/**
+	 * Messaggio di test
+	 * @author luigidurso
+	 *
+	 */
 	static public class TestMessage
 	{
 		
@@ -101,31 +125,34 @@ public class MainActor extends AbstractActor
 		{
 		}
 	}
-	
+	/**
+	 * Builder per la ricezione dei messaggi
+	 */
 	@Override
 	public Receive createReceive() 
 	{
 		return receiveBuilder()
-				.match(ConcurrenceDistanceMatrix.class, c->
+				.match(ConcurrenceDistanceMatrix.class, c->  //Creo il numero di thread necessari per la creazione di DM
 				{
-					int dimension=df.length()/MainActor.threadNr;
-					int lastStep= df.length()%MainActor.threadNr;
+					int dimension=df.length()/this.threadNr;
+					int lastStep= df.length()%this.threadNr;
 					int inizioCorrente=0;
 					
-					for(int i=0; i<MainActor.threadNr ;i++)
+					for(int i=0; i<this.threadNr ;i++)
 					{
-						if(i<MainActor.threadNr-1)
+						if(i<this.threadNr-1)
 						{
 							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
-							actor.tell(new CreateConcurrentDM(this.df.slice(inizioCorrente, inizioCorrente+dimension),this.df), this.getSelf());
+							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension,this.df), this.getSelf());
+
 							
 							inizioCorrente+=dimension;
 						}
 						else
 						{
 							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
-							actor.tell(new CreateConcurrentDM(this.df.slice(inizioCorrente, inizioCorrente+dimension+lastStep),this.df), 
-									this.getSelf());
+							
+							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,this.df), this.getSelf());
 							
 						}
 					}
@@ -133,7 +160,7 @@ public class MainActor extends AbstractActor
 					this.timerInizio=System.currentTimeMillis();
 					
 				})
-				.match(ReceivePartDM.class, r->
+				.match(ReceivePartDM.class, r->  //Messggio con cui riceve parte della DM elaborata da ogni thread 
 				{
 					for(int i=0;i<r.partialDM.length();i++)
 					{
@@ -142,7 +169,7 @@ public class MainActor extends AbstractActor
 					this.isDMComplete();
 					
 				})
-				.match(TestMessage.class, t->
+				.match(TestMessage.class, t->  //messaggio di test
 				{
 					log.info("ciao");
 					
