@@ -98,6 +98,9 @@ public class DistanceMatrix
 	 */
 	public static DataFrame<Object> createMatrix(DataFrame<Object> df)
 	{
+		long timerInizio=System.currentTimeMillis();
+		long timerFine;
+		
 		Object[] indiciValidi=df.index().toArray();
 		
 		int colNumber = df.size();
@@ -135,9 +138,61 @@ public class DistanceMatrix
 			}
 			
 		}
-
+		
+		
+		timerFine=System.currentTimeMillis();
+		System.out.println("Tempo impiegato: "+(timerFine-timerInizio));
 		return distanceMatrix;
 	} 
 	
+	public static DataFrame<Object> concurrentCreateMatrix(DataFrame<Object> partialDF,DataFrame<Object> completeDF)
+	{
+		long timerInizio=System.currentTimeMillis();
+		long timerFine;
+		
+		Object[] indiciValidi=partialDF.index().toArray();
+		
+		int colNumber = partialDF.size();
+		int rowNumberPartial = partialDF.length();
+		int rowNumberComplete = completeDF.length();
+
+		DataFrame<Object> distanceMatrix = partialDF.dropna();
+		distanceMatrix = distanceMatrix.slice(0,0);
+		distanceMatrix = distanceMatrix.add("Id");
+		
+		for (int i = 0; i < rowNumberPartial; i++)
+		{
+			for (int j=(int)indiciValidi[i]+1; j < rowNumberComplete; j++) 
+			{
+				
+				ArrayList<Object> list = new ArrayList<>();
+			
+				for (int x = 0; x < colNumber; x++)
+				{
+					Subtraction sub = DistanceMatrix.checkTypes(x);
+					
+					int subReturn=sub.subtracion(completeDF.get(i, x), completeDF.get(j, x));
+					
+					if(subReturn==-1)
+					{
+						list.add(null);
+					}
+					else
+					{
+						list.add(subReturn);
+					}
+					
+				}
+				list.add(new Tuple<Object,Object>(indiciValidi[i],j));
+				distanceMatrix.append(list);
+			}
+			
+		}
+		
+		
+		timerFine=System.currentTimeMillis();
+		System.out.println("Tempo impiegato: "+(timerFine-timerInizio));
+		return distanceMatrix;
+	} 
 
 }

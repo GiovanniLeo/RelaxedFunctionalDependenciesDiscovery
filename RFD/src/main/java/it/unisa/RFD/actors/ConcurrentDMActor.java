@@ -28,11 +28,13 @@ public class ConcurrentDMActor extends AbstractActor
 	
 	static public class CreateConcurrentDM
 	{
-		private DataFrame<Object> df;
+		private DataFrame<Object> partialDF;
+		private DataFrame<Object> completeDF;
 		
-		public CreateConcurrentDM(DataFrame<Object> dataFrame)
+		public CreateConcurrentDM(DataFrame<Object> dataFrameParziale,DataFrame<Object> dataFrameCompleto)
 		{
-			this.df=dataFrame;
+			this.partialDF=dataFrameParziale;
+			this.completeDF=dataFrameCompleto;
 		}
 	}
 	
@@ -57,7 +59,7 @@ public class ConcurrentDMActor extends AbstractActor
 				.match(CreateConcurrentDM.class, c->
 				{
 					
-					this.getSender().tell(new ReceivePartDM(DistanceMatrix.createMatrix(c.df)), this.getSelf());
+					this.getSender().tell(new ReceivePartDM(DistanceMatrix.concurrentCreateMatrix(c.partialDF,c.completeDF)), this.getSelf());
 					
 				}).build();
 	}
