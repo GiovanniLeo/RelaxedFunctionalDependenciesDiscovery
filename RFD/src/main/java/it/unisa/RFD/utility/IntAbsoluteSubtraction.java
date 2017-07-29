@@ -2,7 +2,7 @@ package it.unisa.RFD.utility;
 
 public class IntAbsoluteSubtraction implements Subtraction{
 	/*
-	 * La classe astratta Number è la superclasse di  BigDecimal, BigInteger, Byte, Double, 
+	 * La classe astratta Number e' la superclasse di  BigDecimal, BigInteger, Byte, Double, 
 	 * Float, Integer,Long,e Short.
 	 * La suddetta classe ha dei metodi per convertire i valori numerici rappresentati in 
 	 * byte, double, float, int, long, and short.
@@ -19,7 +19,13 @@ public class IntAbsoluteSubtraction implements Subtraction{
 	 * castati a Numeric e in seguito viene estratto il valore intero.
 	 * @return La differenza assoluta fra i due numeri
 	 */
-	public int subtracion(Object firstElement, Object secondElement) {
+	public int subtracion(Object firstElement, Object secondElement) 
+	{
+		if(firstElement==null || secondElement==null)
+		{
+			return -1;	
+		}
+		
 		if((firstElement instanceof Integer 
 				|| firstElement instanceof Long 
 				|| firstElement instanceof Double
@@ -31,8 +37,8 @@ public class IntAbsoluteSubtraction implements Subtraction{
 				{
 			Number first = (Number) firstElement;
 			Number second = (Number) secondElement;
-			
-			return Math.abs(Math.abs(first.intValue()) - Math.abs(second.intValue()));
+					
+			return (int)Math.abs(Math.abs(first.intValue()) - Math.abs(second.intValue()));
 		}
 		else{
 			throw new IllegalArgumentException("Expected a numeric element/s");
