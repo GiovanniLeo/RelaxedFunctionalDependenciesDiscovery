@@ -84,8 +84,10 @@ public class MainActor extends AbstractActor
 		if(countPart==this.threadNr)
 		{
 			this.timerFine=System.currentTimeMillis();
-			this.completeDM.show();
 			System.out.println("Concluso in tempo: "+(this.timerFine-this.timerInizio));
+			
+			this.completeDM.show();
+			
 		}
 	}
 	/**
@@ -166,6 +168,7 @@ public class MainActor extends AbstractActor
 					{
 						this.completeDM.append(r.partialDM.row(i));
 					}
+					
 					this.isDMComplete();
 					
 				})
