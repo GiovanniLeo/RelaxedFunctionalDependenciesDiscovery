@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import it.unisa.RFD.utility.DateSubtraction;
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
 import it.unisa.RFD.utility.Subtraction;
 import it.unisa.RFD.utility.Tuple;
@@ -74,7 +75,7 @@ public class DistanceMatrix
 			
 		case "Date":
 			
-			
+			sottrazione=new DateSubtraction();
 			break;
 
 		default:
