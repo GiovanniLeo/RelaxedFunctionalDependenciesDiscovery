@@ -1,5 +1,6 @@
 package it.unisa.RFD.utility;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateSubtraction implements Subtraction{
@@ -21,15 +22,21 @@ public class DateSubtraction implements Subtraction{
 			return -1;
 		}
 		
-		if(firstElement instanceof GregorianCalendar && secondElement instanceof GregorianCalendar)
+		if(firstElement instanceof Date && secondElement instanceof Date)
 		{
-			GregorianCalendar date1 = (GregorianCalendar) firstElement;
-			GregorianCalendar date2 = (GregorianCalendar) secondElement;
+			Date date1 = (Date) firstElement;
+			Date date2 = (Date) secondElement;
 			
-			long millisecondsDate1 = date1.getTimeInMillis();
-			long millisecondsDate2 = date2.getTimeInMillis();
+			GregorianCalendar grgDate1=new GregorianCalendar();
+			GregorianCalendar grgDate2=new GregorianCalendar();
 			
-			return (int) ((millisecondsDate1-millisecondsDate2)/(24*60*60*1000));
+			grgDate1.setTime(date1);
+			grgDate2.setTime(date2);
+			
+			long millisecondsDate1 = grgDate1.getTimeInMillis();
+			long millisecondsDate2 = grgDate2.getTimeInMillis();
+			
+			return (int) Math.abs(((millisecondsDate1-millisecondsDate2)/(24*60*60*1000))) ;
 			
 		}
 		
