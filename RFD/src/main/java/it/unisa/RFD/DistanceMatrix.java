@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
+import it.unisa.RFD.utility.StringSubtraction;
 import it.unisa.RFD.utility.Subtraction;
 import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
@@ -54,7 +55,7 @@ public class DistanceMatrix
 		switch (classType.getSimpleName()) 
 		{
 		case "String":
-			
+			sottrazione=new StringSubtraction();
 			break;
 			
 		case "Long":

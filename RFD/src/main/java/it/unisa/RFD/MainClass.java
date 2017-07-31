@@ -37,7 +37,7 @@ public class MainClass
 //		        else
 //		        		df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
-		df = DistanceMatrix.loadDF("hepatitis.csv",",","?",true); 
+		df = DistanceMatrix.loadDF("hepatitis2.csv",",","?",true); 
 
 //		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
 //		dm.show();
