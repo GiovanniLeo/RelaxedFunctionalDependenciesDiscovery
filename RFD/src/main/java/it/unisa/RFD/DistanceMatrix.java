@@ -1,13 +1,17 @@
 package it.unisa.RFD;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
+
+import com.opencsv.CSVReader;
 
 import it.unisa.RFD.utility.DateSubtraction;
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
@@ -37,6 +41,47 @@ public class DistanceMatrix
 	{
 		DataFrame<Object> df=DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
 		typesColumn=df.dropna().types();
+		return  df;
+		
+	}
+	/**
+	 * Metodo che riceve in input nome del file csv e lo carica in un DataFrame
+	 * @param nameCSV
+	 * @param separator
+	 * @param naString
+	 * @param hasHeader
+	 * @param dateFormat
+	 * @param colDate
+	 * @return dataFRame
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public static DataFrame<Object> alternativeLoadDF(String nameCSV,char separator,String naString,boolean hasHeader,String dateFormat,int colDate) throws IOException, ParseException
+	{
+		CSVReader reader = new CSVReader(new FileReader(nameCSV), separator);
+		DataFrame<Object> df=new DataFrame<>(Arrays.asList(reader.readNext()));
+		String [] nextLine;
+		while ((nextLine = reader.readNext()) != null) 
+		{
+			List<String> riga=Arrays.asList(nextLine);
+			Collections.replaceAll(riga, naString, null);
+			if(dateFormat!=null)
+			{
+				SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+				String value=riga.get(colDate).toString();
+				Date d = sdf.parse(value);
+				
+				sdf.applyPattern("yyyy/MM/dd");
+				String newDateString = sdf.format(d);
+				
+				riga.set(colDate, newDateString);
+			}
+			
+			df.append(riga);
+	    }
+		df=df.convert();
+		typesColumn=df.dropna().types();
+		reader.close();
 		return  df;
 		
 	}
