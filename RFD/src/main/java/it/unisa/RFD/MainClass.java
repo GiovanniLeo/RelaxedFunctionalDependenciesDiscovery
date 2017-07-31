@@ -8,6 +8,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import joinery.DataFrame;
 import it.unisa.RFD.actors.*;
+import it.unisa.RFD.thread.ThreadDivision;
 
 /**
  * 
@@ -39,13 +40,16 @@ public class MainClass
 
 		df = DistanceMatrix.loadDF("hepatitis2.csv",",","?",true); 
 
-		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
-		dm.show();
+//		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
+//		dm.show();
+		
+		ThreadDivision td = new ThreadDivision(df, 8);
+		td.parallizationStart();
 		
 //		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
 //		try 
 //		{
-//			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
+//			ActorRef act=system.actorOf(MainActor.props(df,8),"AttorePrincipale");
 //			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
 //			System.out.println(">>> Press ENTER to exit <<<");
 //		    System.in.read();

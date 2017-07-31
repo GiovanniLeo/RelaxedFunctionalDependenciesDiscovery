@@ -21,19 +21,23 @@ public class IntAbsoluteSubtraction implements Subtraction{
 	 */
 	public int subtracion(Object firstElement, Object secondElement) 
 	{
+		
+		
+		boolean fisrtElementControl = firstElement instanceof Integer 
+										|| firstElement instanceof Long 
+										|| firstElement instanceof Double
+										|| firstElement instanceof Float;
+		boolean secondElementControl = secondElement instanceof Integer
+										|| secondElement instanceof Long
+										|| secondElement instanceof Double
+										|| secondElement instanceof Float;
+	
 		if(firstElement==null || secondElement==null)
 		{
 			return -1;	
 		}
 		
-		if((firstElement instanceof Integer 
-				|| firstElement instanceof Long 
-				|| firstElement instanceof Double
-				|| firstElement instanceof Float) 
-				&& (secondElement instanceof Integer
-						|| secondElement instanceof Long
-						|| secondElement instanceof Double
-						|| secondElement instanceof Float))
+		if(fisrtElementControl && secondElementControl)
 				{
 			Number first = (Number) firstElement;
 			Number second = (Number) secondElement;
