@@ -1,5 +1,6 @@
 package it.unisa.RFD.actors;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import akka.actor.AbstractActor;
@@ -8,6 +9,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import it.unisa.RFD.OrderedDM;
 import it.unisa.RFD.actors.ConcurrentDMActor.CreateConcurrentDM;
 import joinery.DataFrame;
 /**
@@ -19,11 +21,12 @@ public class MainActor extends AbstractActor
 {
 	
 	private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
-	private int countPart=0;
+	private int countPart=0,countOrderedDM=0;
 	private DataFrame<Object> df;
 	private DataFrame<Object> completeDM;
 	private int threadNr=2;
 	private long timerInizio,timerFine;
+	private ArrayList<OrderedDM> listaDMOrdinati;
 	
 	
 	/**
@@ -49,6 +52,8 @@ public class MainActor extends AbstractActor
 		this.completeDM=df.dropna();
 		this.completeDM=completeDM.slice(0,0);
 		this.completeDM=completeDM.add("Id");
+		
+		this.listaDMOrdinati=new ArrayList<>();
 		
 	}
 	/**
@@ -88,6 +93,22 @@ public class MainActor extends AbstractActor
 			
 			this.completeDM.show();
 			
+			for(int i=0; i<this.completeDM.size()-1; i++)
+			{
+				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
+				act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,i), this.getSelf());
+			}
+		}
+	}
+	/**
+	 * Metodo per l'attesa del completamento di tutte le DM ordinate
+	 */
+	private void isOrderedDMComplete()
+	{
+		countOrderedDM++;
+		if(countOrderedDM==this.completeDM.size()-1)
+		{
+			this.listaDMOrdinati.get(1).getOrderedDM().show();
 		}
 	}
 	/**
@@ -113,6 +134,20 @@ public class MainActor extends AbstractActor
 		public ReceivePartDM(DataFrame<Object> partialDM)
 		{
 			this.partialDM=partialDM;
+		}
+	}
+	/**
+	 * Messaggio ricezione DM ordinata
+	 * @author luigidurso
+	 *
+	 */
+	static public class ReceiveOrderedDM
+	{
+		private OrderedDM orderedDM;
+		
+		public ReceiveOrderedDM(OrderedDM orderedDM)
+		{
+			this.orderedDM=orderedDM;
 		}
 	}
 	/**
@@ -175,6 +210,12 @@ public class MainActor extends AbstractActor
 				.match(TestMessage.class, t->  //messaggio di test
 				{
 					log.info("ciao");
+					
+				})
+				.match(ReceiveOrderedDM.class, rc-> //messaggio che riceve le DM ordinate
+				{
+					this.listaDMOrdinati.add(rc.orderedDM);
+					this.isOrderedDMComplete();
 					
 				}).build();
 	}

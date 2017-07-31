@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
 import it.unisa.RFD.utility.Subtraction;
@@ -19,6 +20,7 @@ import joinery.DataFrame;
  */
 public class DistanceMatrix 
 {
+	public static Logger log=Logger.getLogger("log");
 	static private List<Class<?>> typesColumn;
 	/**
 	 * Metodo che riceve in input nome del file csv e lo carica in un DataFrame
@@ -125,7 +127,7 @@ public class DistanceMatrix
 					
 					if(subReturn==-1)
 					{
-						list.add(null);
+						list.add(Integer.MAX_VALUE);
 					}
 					else
 					{
@@ -189,7 +191,8 @@ public class DistanceMatrix
 					
 					if(subReturn==-1)
 					{
-						list.add(null);
+						
+						list.add(Integer.MAX_VALUE);
 					}
 					else
 					{
@@ -208,5 +211,20 @@ public class DistanceMatrix
 		System.out.println("Tempo impiegato: "+(timerFine-timerInizio));
 		return distanceMatrix;
 	} 
+	/**
+	 * Metodo statico per la creazione di una DM ordinata in base a RHS dato come parametro
+	 * @param indiceRHS colonna RHS
+	 * @param dm distance matrix
+	 * @return orderedDM DM ordinata
+	 */
+	public static OrderedDM createOrderedDM(int indiceRHS,DataFrame<Object> dm)
+	{
+		ArrayList<Object> indiciColonne=new ArrayList<>();
+		indiciColonne.addAll(dm.columns());
+		indiciColonne.remove(dm.size()-1);
+		indiciColonne.remove(indiceRHS);
+		
+		return new OrderedDM(dm.sortBy(indiceRHS).groupBy(indiceRHS), indiciColonne, indiceRHS);
+	}
 
 }

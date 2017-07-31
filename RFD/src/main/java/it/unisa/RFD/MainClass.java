@@ -37,28 +37,32 @@ public class MainClass
 //		        else
 //		        		df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
-		df = DistanceMatrix.loadDF("hepatitis2.csv",",","?",true); 
+		df = DistanceMatrix.loadDF("hepatitis.csv",",","?",true); 
 
-		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
-		dm.show();
+//		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
+//		dm.show();
+//
+//		
+//		OrderedDM oDM=DistanceMatrix.createOrderedDM(1, dm);
+//		oDM.getOrderedDM().show();
 		
-//		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
-//		try 
-//		{
-//			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
-//			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
-//			System.out.println(">>> Press ENTER to exit <<<");
-//		    System.in.read();
-//		} 
-//		catch (Exception e) 
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		finally
-//		{
-//			system.terminate();
-//		}
+		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
+		try 
+		{
+			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
+			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
+			System.out.println(">>> Press ENTER to exit <<<");
+		    System.in.read();
+		} 
+		catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			system.terminate();
+		}
 		
 
 	}
