@@ -108,6 +108,8 @@ public class MainActor extends AbstractActor
 		countOrderedDM++;
 		if(countOrderedDM==this.completeDM.size()-1)
 		{
+			this.timerFine=System.currentTimeMillis();
+			System.out.println("Concluso in tempo Cluster: "+(this.timerFine-this.timerInizio));
 			this.listaDMOrdinati.get(1).getOrderedDM().show();
 		}
 	}
