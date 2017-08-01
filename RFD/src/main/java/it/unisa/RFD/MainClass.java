@@ -54,8 +54,8 @@ public class MainClass
 //			df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
 //		df = DistanceMatrix.loadDF("first_dataset2.csv",",","?",true); 
-		indiciData.add(1);
-		df = DistanceMatrix.alternativeLoadDF("first_dataset2.csv",',',"?",true,"dd/MM/yyyy",indiciData); 
+		indiciData.add(-1);
+		df = DistanceMatrix.alternativeLoadDF("cora.csv",';',"?",true,null,indiciData); 
 		df.show();
 
 //		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);

@@ -75,21 +75,26 @@ public class DistanceMatrix
 			List<String> riga=Arrays.asList(nextLine);
 			Collections.replaceAll(riga, naString, null);
 			
-			if(dateFormat!=null || colDate.get(0)==-1 || dateFormat.equals("yyyy/MM/dd"))
+			if(colDate.get(0)!=-1 && dateFormat!=null)
 			{
-				for (int indiceData : colDate) 
+				if(!dateFormat.equals("yyyy/MM/dd"))
 				{
-					
-					SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-					String value=riga.get(indiceData).toString();
-					Date d = sdf.parse(value);
-					
-					sdf.applyPattern("yyyy/MM/dd");
-					String newDateString = sdf.format(d);
-					
-					riga.set(indiceData, newDateString);
+					for (int indiceData : colDate) 
+					{
+						
+						SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+						String value=riga.get(indiceData).toString();
+						Date d = sdf.parse(value);
+						
+						sdf.applyPattern("yyyy/MM/dd");
+						String newDateString = sdf.format(d);
+						
+						riga.set(indiceData, newDateString);
+						
+					}
 					
 				}
+				
 				
 			}
 			
