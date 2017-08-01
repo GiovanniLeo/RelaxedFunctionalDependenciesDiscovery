@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import com.opencsv.CSVReader;
@@ -82,7 +83,7 @@ public class DistanceMatrix
 					for (int indiceData : colDate) 
 					{
 						
-						SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+						SimpleDateFormat sdf = new SimpleDateFormat(dateFormat,Locale.ENGLISH);
 						String value=riga.get(indiceData).toString();
 						Date d = sdf.parse(value);
 						
