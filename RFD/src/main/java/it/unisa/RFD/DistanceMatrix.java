@@ -46,35 +46,51 @@ public class DistanceMatrix
 	}
 	/**
 	 * Metodo che riceve in input nome del file csv e lo carica in un DataFrame
-	 * @param nameCSV
-	 * @param separator
-	 * @param naString
-	 * @param hasHeader
-	 * @param dateFormat
-	 * @param colDate
-	 * @return dataFRame
+	 * @param nameCSV nome file CSV
+	 * @param separator   separatore di colonne utilizzato nel file
+	 * @param naString stringa nulla
+	 * @param hasHeader presenza di header nel file
+	 * @param dateFormat formato data(se presente)
+	 * @param colDate indici colonne data (se presenti)
+	 * @return dataFrame 
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static DataFrame<Object> alternativeLoadDF(String nameCSV,char separator,String naString,boolean hasHeader,String dateFormat,int colDate) throws IOException, ParseException
+	public static DataFrame<Object> alternativeLoadDF(String nameCSV,char separator,String naString,boolean hasHeader,String dateFormat,ArrayList<Integer> colDate) throws IOException, ParseException
 	{
 		CSVReader reader = new CSVReader(new FileReader(nameCSV), separator);
-		DataFrame<Object> df=new DataFrame<>(Arrays.asList(reader.readNext()));
+		DataFrame<Object> df;
+		if(hasHeader)
+		{
+			df=new DataFrame<>(Arrays.asList(reader.readNext()));
+		}
+		else
+		{
+			df=new DataFrame<>();
+		}
+		
 		String [] nextLine;
 		while ((nextLine = reader.readNext()) != null) 
 		{
 			List<String> riga=Arrays.asList(nextLine);
 			Collections.replaceAll(riga, naString, null);
-			if(dateFormat!=null)
+			
+			if(dateFormat!=null || colDate.get(0)==-1 || dateFormat.equals("yyyy/MM/dd"))
 			{
-				SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-				String value=riga.get(colDate).toString();
-				Date d = sdf.parse(value);
+				for (int indiceData : colDate) 
+				{
+					
+					SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+					String value=riga.get(indiceData).toString();
+					Date d = sdf.parse(value);
+					
+					sdf.applyPattern("yyyy/MM/dd");
+					String newDateString = sdf.format(d);
+					
+					riga.set(indiceData, newDateString);
+					
+				}
 				
-				sdf.applyPattern("yyyy/MM/dd");
-				String newDateString = sdf.format(d);
-				
-				riga.set(colDate, newDateString);
 			}
 			
 			df.append(riga);
