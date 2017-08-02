@@ -14,6 +14,9 @@ import com.typesafe.config.ConfigFactory;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.PoisonPill;
+import akka.cluster.singleton.ClusterSingletonManager;
+import akka.cluster.singleton.ClusterSingletonManagerSettings;
 import joinery.DataFrame;
 import it.unisa.RFD.actors.*;
 
@@ -68,11 +71,11 @@ public class MainClass
 		
 		ActorSystem system = ActorSystem.create("SistemaAttoriRDFCluster",config);
 	    //end tentative of cluster
-	    
-//		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
 		try 
 		{
-			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
+			final ClusterSingletonManagerSettings settings =ClusterSingletonManagerSettings.create(system);
+			ActorRef act=system.actorOf(ClusterSingletonManager.props(MainActor.props(df,4),PoisonPill.getInstance(), settings), "AttorePrincipale");
+//			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
 			System.out.println(">>> Press ENTER to continue <<<");
 		    console.readLine();
 		    act.tell(new MainActor.TestMessage(), ActorRef.noSender());
