@@ -80,18 +80,22 @@ public class DistanceMatrix
 			{
 				if(!dateFormat.equals("yyyy/MM/dd"))
 				{
-					for (int indiceData : colDate) 
+					for (int i=0; i<colDate.size(); i++) 
 					{
+						String value=riga.get(colDate.get(i));
 						
-						SimpleDateFormat sdf = new SimpleDateFormat(dateFormat,Locale.ENGLISH);
-						String value=riga.get(indiceData).toString();
-						Date d = sdf.parse(value);
-						
-						sdf.applyPattern("yyyy/MM/dd");
-						String newDateString = sdf.format(d);
-						
-						riga.set(indiceData, newDateString);
-						
+						if(value!=null)
+						{	
+							SimpleDateFormat sdf = new SimpleDateFormat(dateFormat,Locale.ENGLISH);
+							
+							Date d = sdf.parse(value);
+							
+							sdf.applyPattern("yyyy/MM/dd");
+							String newDateString = sdf.format(d);
+							
+							riga.set(colDate.get(i), newDateString);
+							
+						}	
 					}
 					
 				}
