@@ -17,6 +17,8 @@ import akka.actor.ActorSystem;
 import akka.actor.PoisonPill;
 import akka.cluster.singleton.ClusterSingletonManager;
 import akka.cluster.singleton.ClusterSingletonManagerSettings;
+import akka.cluster.singleton.ClusterSingletonProxy;
+import akka.cluster.singleton.ClusterSingletonProxySettings;
 import joinery.DataFrame;
 import it.unisa.RFD.actors.*;
 
@@ -74,11 +76,14 @@ public class MainClass
 		try 
 		{
 			final ClusterSingletonManagerSettings settings =ClusterSingletonManagerSettings.create(system);
-			ActorRef act=system.actorOf(ClusterSingletonManager.props(MainActor.props(df,4),PoisonPill.getInstance(), settings), "AttorePrincipale");
+			system.actorOf(ClusterSingletonManager.props(MainActor.props(df,4),PoisonPill.getInstance(), settings), "AttorePrincipale");
+			
+			ClusterSingletonProxySettings proxySettings =ClusterSingletonProxySettings.create(system);
+			ActorRef proxyPrincipal=system.actorOf(ClusterSingletonProxy.props("/user/AttorePrincipale", proxySettings), "AttorePrincipaleProxy");
 //			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
 			System.out.println(">>> Press ENTER to continue <<<");
 		    console.readLine();
-		    act.tell(new MainActor.TestMessage(), ActorRef.noSender());
+		    proxyPrincipal.tell(new MainActor.TestMessage(), ActorRef.noSender());
 //			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
 			System.out.println(">>> Press ENTER to exit <<<");
 			console.readLine();
