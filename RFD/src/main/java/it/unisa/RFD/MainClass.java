@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import joinery.DataFrame;
@@ -57,21 +60,25 @@ public class MainClass
 		indiciData.add(1);
 		df = DistanceMatrix.alternativeLoadDF("first_dataset2.csv",',',"?",true,"dd/MM/yyyy",indiciData); 
 		df.show();
-
-//		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
-//		dm.show();
-//
-//		
-//		OrderedDM oDM=DistanceMatrix.createOrderedDM(1, dm);
-//		oDM.getOrderedDM().show();
 		
-		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
+		//init tentative of cluster
+		Config config = ConfigFactory.parseString(
+				"akka.remote.netty.tcp.port=" + 2551).withFallback(
+						ConfigFactory.load());
+		
+		ActorSystem system = ActorSystem.create("SistemaAttoriRDFCluster",config);
+		
+		System.out.println(">>> Press ENTER to continue <<<");
+	    console.readLine();
+	    //end tentative of cluster
+	    
+//		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
 		try 
 		{
 			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
 			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
 			System.out.println(">>> Press ENTER to exit <<<");
-		    System.in.read();
+			console.readLine();
 		} 
 		catch (Exception e) 
 		{
