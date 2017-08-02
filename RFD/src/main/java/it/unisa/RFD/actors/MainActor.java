@@ -3,6 +3,8 @@ package it.unisa.RFD.actors;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.typesafe.config.Config;
+
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -63,6 +65,7 @@ public class MainActor extends AbstractActor
 		
 		this.listaDMOrdinati=new ArrayList<>();
 		this.addresses=new ArrayList<>();
+		this.addresses.add(this.getSelf().path().address());
 		
 	}
 	/**
