@@ -67,15 +67,14 @@ public class MainClass
 						ConfigFactory.load());
 		
 		ActorSystem system = ActorSystem.create("SistemaAttoriRDFCluster",config);
-		
-		System.out.println(">>> Press ENTER to continue <<<");
-	    console.readLine();
 	    //end tentative of cluster
 	    
 //		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
 		try 
 		{
 			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
+			System.out.println(">>> Press ENTER to continue <<<");
+		    console.readLine();
 			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
 			System.out.println(">>> Press ENTER to exit <<<");
 			console.readLine();

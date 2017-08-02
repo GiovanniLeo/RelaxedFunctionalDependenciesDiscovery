@@ -6,9 +6,15 @@ import java.util.logging.Logger;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Address;
 import akka.actor.Props;
+import akka.cluster.Cluster;
+import akka.cluster.ClusterEvent.MemberEvent;
+import akka.cluster.ClusterEvent.MemberUp;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.remote.routing.RemoteRouterConfig;
+import akka.routing.RoundRobinPool;
 import it.unisa.RFD.OrderedDM;
 import it.unisa.RFD.actors.ConcurrentDMActor.CreateConcurrentDM;
 import joinery.DataFrame;
@@ -27,6 +33,8 @@ public class MainActor extends AbstractActor
 	private int threadNr=2;
 	private long timerInizio,timerFine;
 	private ArrayList<OrderedDM> listaDMOrdinati;
+	Cluster cluster = Cluster.get(getContext().getSystem());
+	private ArrayList<Address> addresses;
 	
 	
 	/**
@@ -54,6 +62,7 @@ public class MainActor extends AbstractActor
 		this.completeDM=completeDM.add("Id");
 		
 		this.listaDMOrdinati=new ArrayList<>();
+		this.addresses=new ArrayList<>();
 		
 	}
 	/**
@@ -71,12 +80,14 @@ public class MainActor extends AbstractActor
 	public void preStart() throws Exception 
 	{
 		log.info("Sono vivo");
+		cluster.subscribe(getSelf(),  MemberUp.class);
 		super.postStop();
 	}
 
 	@Override
 	public void postStop() throws Exception 
 	{
+		cluster.unsubscribe(getSelf());
 		log.info("Sono morto");
 		super.postStop();
 	}
@@ -177,25 +188,30 @@ public class MainActor extends AbstractActor
 					int lastStep= df.length()%this.threadNr;
 					int inizioCorrente=0;
 					
+					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
+					
 					for(int i=0; i<this.threadNr ;i++)
 					{
 						if(i<this.threadNr-1)
 						{
-							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
-							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension,this.df), this.getSelf());
+							
+							routerRemote.tell(new CreateConcurrentDM(inizioCorrente,dimension,this.df), this.getSelf());
+//							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
+//							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension,this.df), this.getSelf());
 
 							
 							inizioCorrente+=dimension;
 						}
 						else
 						{
-							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
-							
-							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,this.df), this.getSelf());
-							
+//							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
+//							
+//							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,this.df), this.getSelf());
+							routerRemote.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,this.df), this.getSelf());
+//							
 						}
 					}
-					
+//					
 					this.timerInizio=System.currentTimeMillis();
 					
 				})
@@ -214,6 +230,12 @@ public class MainActor extends AbstractActor
 					log.info("ciao");
 					
 				})
+				.match(MemberUp.class, mUp -> 
+				{
+			        log.info("Member is Up: {}", mUp.member());
+			        this.addresses.add(mUp.member().address());
+			        System.out.println(addresses.toString());
+			    })
 				.match(ReceiveOrderedDM.class, rc-> //messaggio che riceve le DM ordinate
 				{
 					this.listaDMOrdinati.add(rc.orderedDM);

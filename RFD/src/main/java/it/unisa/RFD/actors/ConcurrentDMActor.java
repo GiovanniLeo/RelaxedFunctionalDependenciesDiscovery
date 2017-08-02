@@ -1,5 +1,7 @@
 package it.unisa.RFD.actors;
 
+import java.io.Serializable;
+
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 import akka.event.Logging;
@@ -13,7 +15,7 @@ import joinery.DataFrame;
  * @author luigidurso
  *
  */
-public class ConcurrentDMActor extends AbstractActor 
+public class ConcurrentDMActor extends AbstractActor  implements Serializable
 {
 	private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	/**
@@ -35,7 +37,7 @@ public class ConcurrentDMActor extends AbstractActor
 	 * @author luigidurso
 	 *
 	 */
-	static public class CreateConcurrentDM
+	static public class CreateConcurrentDM implements Serializable
 	{
 		private DataFrame<Object> completeDF;
 		private int inizio,dimensione;
