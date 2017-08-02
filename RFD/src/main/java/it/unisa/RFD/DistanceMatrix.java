@@ -1,14 +1,22 @@
 package it.unisa.RFD;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.Locale;
+import java.util.logging.Logger;
 
+import com.opencsv.CSVReader;
+
+import it.unisa.RFD.utility.DateSubtraction;
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
+import it.unisa.RFD.utility.StringSubtraction;
 import it.unisa.RFD.utility.Subtraction;
 import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
@@ -19,6 +27,7 @@ import joinery.DataFrame;
  */
 public class DistanceMatrix 
 {
+	public static Logger log=Logger.getLogger("log");
 	static private List<Class<?>> typesColumn;
 	/**
 	 * Metodo che riceve in input nome del file csv e lo carica in un DataFrame
@@ -33,6 +42,72 @@ public class DistanceMatrix
 	{
 		DataFrame<Object> df=DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
 		typesColumn=df.dropna().types();
+		return  df;
+		
+	}
+	/**
+	 * Metodo che riceve in input nome del file csv e lo carica in un DataFrame
+	 * @param nameCSV nome file CSV
+	 * @param separator   separatore di colonne utilizzato nel file
+	 * @param naString stringa nulla
+	 * @param hasHeader presenza di header nel file
+	 * @param dateFormat formato data(se presente)
+	 * @param colDate indici colonne data (se presenti)
+	 * @return dataFrame 
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public static DataFrame<Object> alternativeLoadDF(String nameCSV,char separator,String naString,boolean hasHeader,String dateFormat,ArrayList<Integer> colDate) throws IOException, ParseException
+	{
+		CSVReader reader = new CSVReader(new FileReader(nameCSV), separator);
+		DataFrame<Object> df;
+		if(hasHeader)
+		{
+			df=new DataFrame<>(Arrays.asList(reader.readNext()));
+		}
+		else
+		{
+			df=new DataFrame<>();
+		}
+		
+		String [] nextLine;
+		while ((nextLine = reader.readNext()) != null) 
+		{
+			List<String> riga=Arrays.asList(nextLine);
+			Collections.replaceAll(riga, naString, null);
+			
+			if(colDate.get(0)!=-1 && dateFormat!=null)
+			{
+				if(!dateFormat.equals("yyyy/MM/dd"))
+				{
+					for (int i=0; i<colDate.size(); i++) 
+					{
+						String value=riga.get(colDate.get(i));
+						
+						if(value!=null)
+						{	
+							SimpleDateFormat sdf = new SimpleDateFormat(dateFormat,Locale.ENGLISH);
+							
+							Date d = sdf.parse(value);
+							
+							sdf.applyPattern("yyyy/MM/dd");
+							String newDateString = sdf.format(d);
+							
+							riga.set(colDate.get(i), newDateString);
+							
+						}	
+					}
+					
+				}
+				
+				
+			}
+			
+			df.append(riga);
+	    }
+		df=df.convert();
+		typesColumn=df.dropna().types();
+		reader.close();
 		return  df;
 		
 	}
@@ -52,7 +127,7 @@ public class DistanceMatrix
 		switch (classType.getSimpleName()) 
 		{
 		case "String":
-			
+			sottrazione=new StringSubtraction();
 			break;
 			
 		case "Long":
@@ -72,7 +147,7 @@ public class DistanceMatrix
 			
 		case "Date":
 			
-			
+			sottrazione=new DateSubtraction();
 			break;
 
 		default:
@@ -125,7 +200,7 @@ public class DistanceMatrix
 					
 					if(subReturn==-1)
 					{
-						list.add(null);
+						list.add(Integer.MAX_VALUE);
 					}
 					else
 					{
@@ -189,7 +264,8 @@ public class DistanceMatrix
 					
 					if(subReturn==-1)
 					{
-						list.add(null);
+						
+						list.add(Integer.MAX_VALUE);
 					}
 					else
 					{
@@ -208,5 +284,20 @@ public class DistanceMatrix
 		System.out.println("Tempo impiegato: "+(timerFine-timerInizio));
 		return distanceMatrix;
 	} 
+	/**
+	 * Metodo statico per la creazione di una DM ordinata in base a RHS dato come parametro
+	 * @param indiceRHS colonna RHS
+	 * @param dm distance matrix
+	 * @return orderedDM DM ordinata
+	 */
+	public static OrderedDM createOrderedDM(int indiceRHS,DataFrame<Object> dm)
+	{
+		ArrayList<Object> indiciColonne=new ArrayList<>();
+		indiciColonne.addAll(dm.columns());
+		indiciColonne.remove(dm.size()-1);
+		indiciColonne.remove(indiceRHS);
+		
+		return new OrderedDM(dm.sortBy(indiceRHS).groupBy(indiceRHS), indiciColonne, indiceRHS);
+	}
 
 }
