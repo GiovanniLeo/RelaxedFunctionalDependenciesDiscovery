@@ -75,7 +75,8 @@ public class MainClass
 			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
 			System.out.println(">>> Press ENTER to continue <<<");
 		    console.readLine();
-			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
+		    act.tell(new MainActor.TestMessage(), ActorRef.noSender());
+//			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
 			System.out.println(">>> Press ENTER to exit <<<");
 			console.readLine();
 		} 

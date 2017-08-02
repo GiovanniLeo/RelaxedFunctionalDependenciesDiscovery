@@ -15,7 +15,7 @@ import joinery.DataFrame;
  * @author luigidurso
  *
  */
-public class ConcurrentDMActor extends AbstractActor  implements Serializable
+public class ConcurrentDMActor extends AbstractActor 
 {
 	private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	/**
@@ -50,17 +50,32 @@ public class ConcurrentDMActor extends AbstractActor  implements Serializable
 		}
 	}
 	
+	/**
+	 * Messaggio di test
+	 * @author luigidurso
+	 *
+	 */
+	static public class TestMessage implements Serializable
+	{
+		private String msg;
+		
+		public TestMessage(String messaggio)
+		{
+			this.msg=messaggio;
+		}
+	}
+	
 	@Override
 	public void preStart() throws Exception 
 	{
-		log.info("Sono vivo");
+		log.info("Sono vivo concurrentDMActor");
 		super.postStop();
 	}
 
 	@Override
 	public void postStop() throws Exception 
 	{
-		log.info("Sono morto");
+		log.info("Sono morto concurrentDMActor");
 		super.postStop();
 	}
 	/**
@@ -75,7 +90,14 @@ public class ConcurrentDMActor extends AbstractActor  implements Serializable
 					
 					this.getSender().tell(new ReceivePartDM(DistanceMatrix.concurrentCreateMatrix(c.inizio,c.dimensione,c.completeDF)), this.getSelf());
 					
-				}).build();
+				})
+				.match(TestMessage.class, m->  //Stampa messaggio di test
+				{
+					
+					System.out.println(m.msg);
+					
+				})
+				.build();
 	}
 
 }

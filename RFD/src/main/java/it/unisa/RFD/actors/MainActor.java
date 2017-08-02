@@ -227,8 +227,12 @@ public class MainActor extends AbstractActor
 				})
 				.match(TestMessage.class, t->  //messaggio di test
 				{
-					log.info("ciao");
+					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
 					
+					for(int i=0; i<this.threadNr ;i++)
+					{
+						routerRemote.tell(new ConcurrentDMActor.TestMessage("ciao stocazzo: "+i), this.getSelf());
+					}
 				})
 				.match(MemberUp.class, mUp -> 
 				{
