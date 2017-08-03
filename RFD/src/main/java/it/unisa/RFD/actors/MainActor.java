@@ -206,7 +206,8 @@ public class MainActor extends AbstractActor
 						if(i<this.threadNr-1)
 						{
 							
-							routerRemote.tell(new CreateConcurrentDM(inizioCorrente,dimension,SerializedDataFrame.serializeDF(this.df)), this.getSelf());
+							routerRemote.tell(new ConcurrentDMActor.CreateConcurrentDM(inizioCorrente,dimension,SerializedDataFrame.serializeDF(this.df)), this.getSelf());
+							
 //							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
 //							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension,this.df), this.getSelf());
 
@@ -216,10 +217,9 @@ public class MainActor extends AbstractActor
 						else
 						{
 //							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
-//							
 //							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,this.df), this.getSelf());
-							routerRemote.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,SerializedDataFrame.serializeDF(this.df)), this.getSelf());
-//							
+							
+							routerRemote.tell(new ConcurrentDMActor.CreateConcurrentDM(inizioCorrente,dimension+lastStep,SerializedDataFrame.serializeDF(this.df)), this.getSelf());
 						}
 					}
 //					
