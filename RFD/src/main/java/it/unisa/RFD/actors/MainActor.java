@@ -1,5 +1,6 @@
 package it.unisa.RFD.actors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -165,7 +166,7 @@ public class MainActor extends AbstractActor
 	 * @author luigidurso
 	 *
 	 */
-	static public class ReceiveOrderedDM
+	static public class ReceiveOrderedDM implements Serializable
 	{
 		private OrderedDM orderedDM;
 		
