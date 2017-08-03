@@ -6,18 +6,12 @@ import java.util.List;
 
 import joinery.DataFrame;
 
-public class SerializedDataFrame implements Serializable{
+public class SerializedDataFrame {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
-	private ArrayList<ArrayList<Object>> dataframeRow; 
-
-	public  void  serializeDF(DataFrame<Object> df)
+	public static  ArrayList<ArrayList<Object>>  serializeDF(DataFrame<Object> df)
 	{
-		dataframeRow = new ArrayList<>();
+		ArrayList<ArrayList<Object>> dataframeRow = new ArrayList<>();
 		ArrayList<Object> dataFrameColumns = new ArrayList<>();
 
 		int colNumber = df.size();
@@ -41,12 +35,14 @@ public class SerializedDataFrame implements Serializable{
 			}
 			dataframeRow.add(row);
 		}
+		
+		return dataframeRow;
 
 
 
 	}
 
-	public DataFrame<Object> deserializeDataFrame()
+	public static DataFrame<Object> deserializeDataFrame(ArrayList<ArrayList<Object>> dataframeRow)
 	{
 		DataFrame<Object> df = new DataFrame<Object>();
 		for (int i = 0; i < dataframeRow.size(); i++) {
@@ -65,10 +61,6 @@ public class SerializedDataFrame implements Serializable{
 		return df;
 
 
-	}
-
-	public ArrayList<ArrayList<Object>> getDataframeRow() {
-		return dataframeRow;
 	}
 
 

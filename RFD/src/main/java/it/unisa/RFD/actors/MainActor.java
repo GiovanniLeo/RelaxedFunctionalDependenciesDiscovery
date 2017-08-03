@@ -15,6 +15,7 @@ import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent.MemberEvent;
 import akka.cluster.ClusterEvent.MemberRemoved;
 import akka.cluster.ClusterEvent.MemberUp;
+import akka.cluster.ClusterEvent.UnreachableMember;
 import akka.cluster.routing.ClusterRouterPool;
 import akka.cluster.routing.ClusterRouterPoolSettings;
 import akka.event.Logging;
@@ -24,6 +25,7 @@ import akka.routing.ConsistentHashingPool;
 import akka.routing.RoundRobinPool;
 import it.unisa.RFD.OrderedDM;
 import it.unisa.RFD.actors.ConcurrentDMActor.CreateConcurrentDM;
+import it.unisa.RFD.utility.SerializedDataFrame;
 import joinery.DataFrame;
 import scala.Option;
 /**
@@ -89,7 +91,7 @@ public class MainActor extends AbstractActor
 	public void preStart() throws Exception 
 	{
 		log.info("Sono vivo");
-		cluster.subscribe(getSelf(),  MemberUp.class, MemberRemoved.class);
+		cluster.subscribe(getSelf(),  MemberUp.class, UnreachableMember.class);
 		super.postStop();
 	}
 
@@ -204,7 +206,7 @@ public class MainActor extends AbstractActor
 						if(i<this.threadNr-1)
 						{
 							
-							routerRemote.tell(new CreateConcurrentDM(inizioCorrente,dimension,this.df), this.getSelf());
+							routerRemote.tell(new CreateConcurrentDM(inizioCorrente,dimension,SerializedDataFrame.serializeDF(this.df)), this.getSelf());
 //							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
 //							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension,this.df), this.getSelf());
 
@@ -216,7 +218,7 @@ public class MainActor extends AbstractActor
 //							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
 //							
 //							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,this.df), this.getSelf());
-							routerRemote.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,this.df), this.getSelf());
+							routerRemote.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,SerializedDataFrame.serializeDF(this.df)), this.getSelf());
 //							
 						}
 					}
@@ -249,10 +251,10 @@ public class MainActor extends AbstractActor
 			        this.addresses.add(mUp.member().address());
 			        System.out.println(addresses.toString());
 			    })
-				.match(MemberRemoved.class, mp -> 
+				.match(UnreachableMember.class, mp -> 
 				{
 			        log.info("Member is Removed: {}", mp.member());
-			        this.addresses.remove(mp);
+			        this.addresses.remove(mp.member().address());
 			        System.out.println(addresses.toString());
 			    })
 				.match(ReceiveOrderedDM.class, rc-> //messaggio che riceve le DM ordinate

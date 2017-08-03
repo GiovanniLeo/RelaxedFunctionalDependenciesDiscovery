@@ -1,6 +1,7 @@
 package it.unisa.RFD.actors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
@@ -9,6 +10,7 @@ import akka.event.LoggingAdapter;
 import it.unisa.RFD.DistanceMatrix;
 import it.unisa.RFD.actors.MainActor.ConcurrenceDistanceMatrix;
 import it.unisa.RFD.actors.MainActor.ReceivePartDM;
+import it.unisa.RFD.utility.SerializedDataFrame;
 import joinery.DataFrame;
 /**
  * Attore che elabora una piccola parte di DataFrame per ottenere una DM parziale
@@ -39,10 +41,10 @@ public class ConcurrentDMActor extends AbstractActor
 	 */
 	static public class CreateConcurrentDM implements Serializable
 	{
-		private DataFrame<Object> completeDF;
+		private ArrayList<ArrayList<Object>> completeDF;
 		private int inizio,dimensione;
 		
-		public CreateConcurrentDM(int inizio,int dimensione,DataFrame<Object> dataFrameCompleto)
+		public CreateConcurrentDM(int inizio,int dimensione,ArrayList<ArrayList<Object>> dataFrameCompleto)
 		{
 			this.completeDF=dataFrameCompleto;
 			this.inizio=inizio;
@@ -88,7 +90,7 @@ public class ConcurrentDMActor extends AbstractActor
 				.match(CreateConcurrentDM.class, c->  //Chiama metodo per la creazione della DM parziale e la invia al MainActor
 				{
 					
-					this.getSender().tell(new ReceivePartDM(DistanceMatrix.concurrentCreateMatrix(c.inizio,c.dimensione,c.completeDF)), this.getSelf());
+					this.getSender().tell(new ReceivePartDM(DistanceMatrix.concurrentCreateMatrix(c.inizio,c.dimensione,SerializedDataFrame.deserializeDataFrame(c.completeDF))), this.getSelf());
 					
 				})
 				.match(TestMessage.class, m->  //Stampa messaggio di test
