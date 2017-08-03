@@ -61,9 +61,9 @@ public class MainClass
 //		else
 //			df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
-//		df = DistanceMatrix.loadDF("first_dataset2.csv",",","?",true); 
-		indiciData.add(1);
-		df = DistanceMatrix.alternativeLoadDF("first_dataset2.csv",',',"?",true,"dd/MM/yyyy",indiciData); 
+		df = DistanceMatrix.loadDF("hepatitis.csv",",","?",true); 
+//		indiciData.add(1);
+//		df = DistanceMatrix.alternativeLoadDF("first_dataset2.csv",',',"?",true,"dd/MM/yyyy",indiciData); 
 		df.show();
 		
 		//init tentative of cluster

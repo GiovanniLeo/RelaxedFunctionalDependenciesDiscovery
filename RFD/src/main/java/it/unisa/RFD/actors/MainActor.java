@@ -229,9 +229,10 @@ public class MainActor extends AbstractActor
 				})
 				.match(ReceivePartDM.class, r->  //Messggio con cui riceve parte della DM elaborata da ogni thread 
 				{
-					for(int i=0;i<SerializedDataFrame.deserializeDataFrame(r.partialDM).length();i++)
+					DataFrame<Object> dataFrameParziale=SerializedDataFrame.deserializeDataFrame(r.partialDM);
+					for(int i=0;i<dataFrameParziale.length();i++)
 					{
-						this.completeDM.append(SerializedDataFrame.deserializeDataFrame(r.partialDM).row(i));
+						this.completeDM.append(dataFrameParziale.row(i));
 					}
 					
 					this.isDMComplete();
