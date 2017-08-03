@@ -1,5 +1,6 @@
 package it.unisa.RFD.actors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import akka.actor.AbstractActor;
@@ -35,7 +36,7 @@ public class ConcurrentOrderedDMActor extends AbstractActor
 	 * @author luigidurso
 	 *
 	 */
-	public static class CreateOrderedDM
+	public static class CreateOrderedDM implements Serializable
 	{
 		private ArrayList<ArrayList<Object>> dm;
 		private int indiceRHS;
