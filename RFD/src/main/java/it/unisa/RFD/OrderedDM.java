@@ -1,5 +1,6 @@
 package it.unisa.RFD;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import joinery.DataFrame;
@@ -8,7 +9,7 @@ import joinery.DataFrame;
  * @author luigidurso
  *
  */
-public class OrderedDM 
+public class OrderedDM implements Serializable
 {
 	private DataFrame<Object> orderedDM;
 	private ArrayList<Object> lhs;
