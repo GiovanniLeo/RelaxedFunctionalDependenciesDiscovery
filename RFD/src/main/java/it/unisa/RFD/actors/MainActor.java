@@ -154,9 +154,9 @@ public class MainActor extends AbstractActor
 	 */
 	static public class ReceivePartDM
 	{
-		private DataFrame<Object> partialDM;
+		private ArrayList<ArrayList<Object>> partialDM;
 		
-		public ReceivePartDM(DataFrame<Object> partialDM)
+		public ReceivePartDM(ArrayList<ArrayList<Object>> partialDM)
 		{
 			this.partialDM=partialDM;
 		}
@@ -229,9 +229,9 @@ public class MainActor extends AbstractActor
 				})
 				.match(ReceivePartDM.class, r->  //Messggio con cui riceve parte della DM elaborata da ogni thread 
 				{
-					for(int i=0;i<r.partialDM.length();i++)
+					for(int i=0;i<SerializedDataFrame.deserializeDataFrame(r.partialDM).length();i++)
 					{
-						this.completeDM.append(r.partialDM.row(i));
+						this.completeDM.append(SerializedDataFrame.deserializeDataFrame(r.partialDM).row(i));
 					}
 					
 					this.isDMComplete();

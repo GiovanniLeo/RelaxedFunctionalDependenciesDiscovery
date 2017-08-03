@@ -16,6 +16,7 @@ import com.opencsv.CSVReader;
 
 import it.unisa.RFD.utility.DateSubtraction;
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
+import it.unisa.RFD.utility.SerializedDataFrame;
 import it.unisa.RFD.utility.StringSubtraction;
 import it.unisa.RFD.utility.Subtraction;
 import it.unisa.RFD.utility.Tuple;
@@ -237,7 +238,7 @@ public class DistanceMatrix
 	 * viene inserito nel nuovo dataframe. 
 	 * Versione per la parallelizzazione.
 	 */
-	public static DataFrame<Object> concurrentCreateMatrix(int inizio,int dimensione,DataFrame<Object> completeDF)
+	public static ArrayList<ArrayList<Object>> concurrentCreateMatrix(int inizio,int dimensione,DataFrame<Object> completeDF)
 	{
 		List<Class<?>> typesColumn;
 		typesColumn=completeDF.dropna().types();
@@ -285,7 +286,7 @@ public class DistanceMatrix
 		
 		timerFine=System.currentTimeMillis();
 		System.out.println("Tempo impiegato: "+(timerFine-timerInizio));
-		return distanceMatrix;
+		return SerializedDataFrame.serializeDF(distanceMatrix);
 	} 
 	/**
 	 * Metodo statico per la creazione di una DM ordinata in base a RHS dato come parametro
