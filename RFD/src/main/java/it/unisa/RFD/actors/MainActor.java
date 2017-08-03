@@ -13,6 +13,7 @@ import akka.actor.Address;
 import akka.actor.Props;
 import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent.MemberEvent;
+import akka.cluster.ClusterEvent.MemberRemoved;
 import akka.cluster.ClusterEvent.MemberUp;
 import akka.cluster.routing.ClusterRouterPool;
 import akka.cluster.routing.ClusterRouterPoolSettings;
@@ -88,7 +89,7 @@ public class MainActor extends AbstractActor
 	public void preStart() throws Exception 
 	{
 		log.info("Sono vivo");
-		cluster.subscribe(getSelf(),  MemberUp.class);
+		cluster.subscribe(getSelf(),  MemberUp.class, MemberRemoved.class);
 		super.postStop();
 	}
 
@@ -235,12 +236,7 @@ public class MainActor extends AbstractActor
 				})
 				.match(TestMessage.class, t->  //messaggio di test
 				{
-//					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
-					int totalInstances = 100;
-					int maxInstancesPerNode = 4;
-					boolean allowLocalRoutees = false;
-					ActorRef routerRemote = getContext().actorOf(new ClusterRouterPool(new RoundRobinPool(this.threadNr),new ClusterRouterPoolSettings(totalInstances, maxInstancesPerNode,
-					      allowLocalRoutees,Option.empty())).props(ConcurrentDMActor.props()), "workerRouter");
+					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
 					
 					for(int i=0; i<this.threadNr ;i++)
 					{
@@ -251,6 +247,12 @@ public class MainActor extends AbstractActor
 				{
 			        log.info("Member is Up: {}", mUp.member());
 			        this.addresses.add(mUp.member().address());
+			        System.out.println(addresses.toString());
+			    })
+				.match(MemberRemoved.class, mp -> 
+				{
+			        log.info("Member is Removed: {}", mp.member());
+			        this.addresses.remove(mp);
 			        System.out.println(addresses.toString());
 			    })
 				.match(ReceiveOrderedDM.class, rc-> //messaggio che riceve le DM ordinate
