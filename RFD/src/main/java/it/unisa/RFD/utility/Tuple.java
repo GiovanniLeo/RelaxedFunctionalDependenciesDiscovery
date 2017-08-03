@@ -2,17 +2,17 @@ package it.unisa.RFD.utility;
 
 import java.io.Serializable;
 
-public class Tuple <X,Y> implements Serializable
+public class Tuple implements Serializable
 {
 
-	private final X x;
-	private final Y y;
+	private final int x;
+	private final int y;
 	/**
 	 * @param x
 	 * @param y
 	 * Coppia di elementi immutabili.
 	 */
-	public Tuple(X x, Y y) {
+	public Tuple(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -26,7 +26,7 @@ public class Tuple <X,Y> implements Serializable
 	 * Restituisce il primo elemento della tupla.
 	 * @return primo elemento della tupla
 	 */
-	public X getX() {
+	public int getX() {
 		return x;
 	}
 	
@@ -34,7 +34,7 @@ public class Tuple <X,Y> implements Serializable
 	 * Restituisce il secondo elemento della tupla.
 	 * @return primo elemento della tupla
 	 */
-	public Y getY() {
+	public int getY() {
 		return y;
 	}
 

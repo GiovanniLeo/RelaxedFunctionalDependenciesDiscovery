@@ -209,7 +209,7 @@ public class DistanceMatrix
 					}
 					
 				}
-				list.add(new Tuple<Object,Object>(indiciValidi[i],indiciValidi[j]));
+				list.add(new Tuple((int)indiciValidi[i],(int)indiciValidi[j]));
 				distanceMatrix.append(list);
 			}
 			
@@ -277,7 +277,7 @@ public class DistanceMatrix
 					}
 					
 				}
-				list.add(new Tuple<Object,Object>(i,j));
+				list.add(new Tuple(i,j));
 				distanceMatrix.append(list);
 			}
 			
