@@ -80,11 +80,16 @@ public class MainClass
 			
 			ClusterSingletonProxySettings proxySettings =ClusterSingletonProxySettings.create(system);
 			ActorRef proxyPrincipal=system.actorOf(ClusterSingletonProxy.props("/user/AttorePrincipale", proxySettings), "AttorePrincipaleProxy");
+			
 //			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
+			
 			System.out.println(">>> Press ENTER to continue <<<");
 		    console.readLine();
+		    
 		    proxyPrincipal.tell(new MainActor.TestMessage(), ActorRef.noSender());
-//			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
+		    
+//		    proxyPrincipal.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
+		    
 			System.out.println(">>> Press ENTER to exit <<<");
 			console.readLine();
 		} 

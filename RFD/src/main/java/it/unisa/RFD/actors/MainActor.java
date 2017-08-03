@@ -1,6 +1,7 @@
 package it.unisa.RFD.actors;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.typesafe.config.Config;
@@ -13,13 +14,17 @@ import akka.actor.Props;
 import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent.MemberEvent;
 import akka.cluster.ClusterEvent.MemberUp;
+import akka.cluster.routing.ClusterRouterPool;
+import akka.cluster.routing.ClusterRouterPoolSettings;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.remote.routing.RemoteRouterConfig;
+import akka.routing.ConsistentHashingPool;
 import akka.routing.RoundRobinPool;
 import it.unisa.RFD.OrderedDM;
 import it.unisa.RFD.actors.ConcurrentDMActor.CreateConcurrentDM;
 import joinery.DataFrame;
+import scala.Option;
 /**
  * Attore principale che gestisce la parallelizzazione 
  * @author luigidurso
@@ -230,7 +235,12 @@ public class MainActor extends AbstractActor
 				})
 				.match(TestMessage.class, t->  //messaggio di test
 				{
-					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
+//					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
+					int totalInstances = 100;
+					int maxInstancesPerNode = 4;
+					boolean allowLocalRoutees = false;
+					ActorRef routerRemote = getContext().actorOf(new ClusterRouterPool(new RoundRobinPool(this.threadNr),new ClusterRouterPoolSettings(totalInstances, maxInstancesPerNode,
+					      allowLocalRoutees,Option.empty())).props(ConcurrentDMActor.props()), "workerRouter");
 					
 					for(int i=0; i<this.threadNr ;i++)
 					{
