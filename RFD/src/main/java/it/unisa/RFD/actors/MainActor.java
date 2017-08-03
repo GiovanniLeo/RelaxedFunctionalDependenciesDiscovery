@@ -152,7 +152,7 @@ public class MainActor extends AbstractActor
 	 * @author luigidurso
 	 *
 	 */
-	static public class ReceivePartDM
+	static public class ReceivePartDM implements Serializable
 	{
 		private ArrayList<ArrayList<Object>> partialDM;
 		
