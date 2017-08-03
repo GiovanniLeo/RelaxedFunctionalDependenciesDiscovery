@@ -3,6 +3,7 @@ package it.unisa.RFD;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import it.unisa.RFD.utility.SerializedDataFrame;
 import joinery.DataFrame;
 /**
  * Classe rappresentante la distance matrix ordinata per RHS e divisa in cluster
@@ -11,7 +12,7 @@ import joinery.DataFrame;
  */
 public class OrderedDM implements Serializable
 {
-	private DataFrame<Object> orderedDM;
+	private ArrayList<ArrayList<Object>> orderedDM;
 	private ArrayList<Object> lhs;
 	private int rhs;
 	/**
@@ -22,7 +23,7 @@ public class OrderedDM implements Serializable
 	 */
 	public OrderedDM(DataFrame<Object> orderedDistanceM,ArrayList<Object> indiciLHS,int indiceRHS)
 	{
-		this.orderedDM=orderedDistanceM;
+		this.orderedDM=SerializedDataFrame.serializeDF(orderedDistanceM);
 		this.lhs=indiciLHS;
 		this.rhs=indiceRHS;
 	}
@@ -32,7 +33,7 @@ public class OrderedDM implements Serializable
 	 */
 	public DataFrame<Object> getOrderedDM()
 	{
-		return orderedDM;
+		return SerializedDataFrame.deserializeDataFrame(orderedDM);
 	}
 	/**
 	 * Set DM ordinata
@@ -40,7 +41,7 @@ public class OrderedDM implements Serializable
 	 */
 	public void setOrderedDM(DataFrame<Object> orderedDM) 
 	{
-		this.orderedDM = orderedDM;
+		this.orderedDM = SerializedDataFrame.serializeDF(orderedDM);
 	}
 	/**
 	 * Getter indici LHS

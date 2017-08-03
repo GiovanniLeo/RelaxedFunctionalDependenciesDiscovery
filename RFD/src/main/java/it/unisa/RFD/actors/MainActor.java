@@ -116,10 +116,11 @@ public class MainActor extends AbstractActor
 			
 			this.completeDM.show();
 			
+			ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentOrderedDMActor.props()));
 			for(int i=0; i<this.completeDM.size()-1; i++)
 			{
-				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
-				act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,i), this.getSelf());
+//				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
+				routerRemote.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(SerializedDataFrame.serializeDF(completeDM),i), this.getSelf());
 			}
 		}
 	}

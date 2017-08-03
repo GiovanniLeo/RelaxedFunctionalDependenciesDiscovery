@@ -1,9 +1,12 @@
 package it.unisa.RFD.actors;
 
+import java.util.ArrayList;
+
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 import it.unisa.RFD.DistanceMatrix;
 import it.unisa.RFD.actors.MainActor.ReceiveOrderedDM;
+import it.unisa.RFD.utility.SerializedDataFrame;
 import joinery.DataFrame;
 /**
  * Attore per la creazione di DM ordinate
@@ -34,10 +37,10 @@ public class ConcurrentOrderedDMActor extends AbstractActor
 	 */
 	public static class CreateOrderedDM
 	{
-		private DataFrame<Object> dm;
+		private ArrayList<ArrayList<Object>> dm;
 		private int indiceRHS;
 		
-		public CreateOrderedDM(DataFrame<Object> distanceMatrix,int rhs)
+		public CreateOrderedDM(ArrayList<ArrayList<Object>> distanceMatrix,int rhs)
 		{
 			this.dm=distanceMatrix;
 			this.indiceRHS=rhs;
@@ -51,7 +54,7 @@ public class ConcurrentOrderedDMActor extends AbstractActor
 				.match(CreateOrderedDM.class, c-> //crea DM ordinata e la spedisce al mittente
 				{
 					
-					this.getSender().tell(new ReceiveOrderedDM(DistanceMatrix.createOrderedDM(c.indiceRHS, c.dm)), this.getSelf());
+					this.getSender().tell(new ReceiveOrderedDM(DistanceMatrix.createOrderedDM(c.indiceRHS,SerializedDataFrame.deserializeDataFrame(c.dm))), this.getSelf());
 					
 				}).build();
 	}

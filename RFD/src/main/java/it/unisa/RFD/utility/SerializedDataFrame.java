@@ -21,8 +21,7 @@ public class SerializedDataFrame {
 		{
 			dataFrameColumns.add(col);
 		}
-
-		System.out.println(dataFrameColumns.toString());
+		
 		dataframeRow.add(dataFrameColumns);
 
 		for(int i = 0; i < rowNumber;i++)
