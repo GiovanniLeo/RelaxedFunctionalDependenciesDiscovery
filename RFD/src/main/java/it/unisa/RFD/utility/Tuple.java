@@ -1,6 +1,9 @@
 package it.unisa.RFD.utility;
 
-public class Tuple <X,Y>{
+import java.io.Serializable;
+
+public class Tuple <X,Y> implements Serializable
+{
 
 	private final X x;
 	private final Y y;
