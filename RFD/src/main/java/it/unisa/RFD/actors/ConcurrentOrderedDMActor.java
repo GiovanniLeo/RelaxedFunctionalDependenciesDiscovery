@@ -38,6 +38,10 @@ public class ConcurrentOrderedDMActor extends AbstractActor
 	 */
 	public static class CreateOrderedDM implements Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7747520858457472505L;
 		private ArrayList<ArrayList<Object>> dm;
 		private int indiceRHS;
 		
