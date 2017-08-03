@@ -116,7 +116,7 @@ public class MainActor extends AbstractActor
 			
 			this.completeDM.show();
 			
-			ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentOrderedDMActor.props()));
+			ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.completeDM.size()-1), addresses).props(ConcurrentOrderedDMActor.props()));
 			for(int i=0; i<this.completeDM.size()-1; i++)
 			{
 //				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
@@ -262,6 +262,7 @@ public class MainActor extends AbstractActor
 			    })
 				.match(ReceiveOrderedDM.class, rc-> //messaggio che riceve le DM ordinate
 				{
+					log.info("Ricevuta DM ordinata da: {}", this.getSender());
 					this.listaDMOrdinati.add(rc.orderedDM);
 					this.isOrderedDMComplete();
 					
