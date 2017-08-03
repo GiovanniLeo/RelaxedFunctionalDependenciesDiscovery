@@ -241,8 +241,12 @@ public class MainActor extends AbstractActor
 				})
 				.match(TestMessage.class, t->  //messaggio di test
 				{
-					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
-					
+//					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
+					int totalInstances = this.threadNr;
+					int maxInstancesPerNode = 2;
+					boolean allowLocalRoutees = true;
+					ActorRef routerRemote = getContext().actorOf(new ClusterRouterPool(new RoundRobinPool(this.threadNr),new ClusterRouterPoolSettings(totalInstances, maxInstancesPerNode,
+					      allowLocalRoutees, Option.empty())).props(ConcurrentDMActor.props()));
 					for(int i=0; i<this.threadNr ;i++)
 					{
 						routerRemote.tell(new ConcurrentDMActor.TestMessage("ciao stocazzo: "+i), this.getSelf());

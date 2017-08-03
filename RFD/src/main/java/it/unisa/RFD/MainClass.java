@@ -86,9 +86,9 @@ public class MainClass
 			System.out.println(">>> Press ENTER to continue <<<");
 		    console.readLine();
 		    
-//		    proxyPrincipal.tell(new MainActor.TestMessage(), ActorRef.noSender());
+		    proxyPrincipal.tell(new MainActor.TestMessage(), ActorRef.noSender());
 		    
-		    proxyPrincipal.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
+//		    proxyPrincipal.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
 		    
 			System.out.println(">>> Press ENTER to exit <<<");
 			console.readLine();
