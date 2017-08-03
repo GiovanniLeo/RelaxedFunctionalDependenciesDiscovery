@@ -28,7 +28,6 @@ import joinery.DataFrame;
 public class DistanceMatrix 
 {
 	public static Logger log=Logger.getLogger("log");
-	static private List<Class<?>> typesColumn;
 	/**
 	 * Metodo che riceve in input nome del file csv e lo carica in un DataFrame
 	 * @param nameCSV nome file CSV
@@ -41,7 +40,6 @@ public class DistanceMatrix
 	public static DataFrame<Object> loadDF(String nameCSV,String separator,String naString,boolean hasHeader) throws IOException
 	{
 		DataFrame<Object> df=DataFrame.readCsv(nameCSV, separator, naString, hasHeader);
-		typesColumn=df.dropna().types();
 		return  df;
 		
 	}
@@ -106,7 +104,6 @@ public class DistanceMatrix
 			df.append(riga);
 	    }
 		df=df.convert();
-		typesColumn=df.dropna().types();
 		reader.close();
 		return  df;
 		
@@ -117,7 +114,7 @@ public class DistanceMatrix
 	 * @param indiceColonna
 	 * @return Subtraction istanza dell'interfaccia per la sottrazione
 	 */
-	private static Subtraction checkTypes(int indiceColonna)
+	private static Subtraction checkTypes(int indiceColonna,List<Class<?>> typesColumn)
 	{
 		
 		Class<?> classType=typesColumn.get(indiceColonna);
@@ -173,6 +170,9 @@ public class DistanceMatrix
 	 */
 	public static DataFrame<Object> createMatrix(DataFrame<Object> df)
 	{
+		List<Class<?>> typesColumn;
+		typesColumn=df.dropna().types();
+		
 		long timerInizio=System.currentTimeMillis();
 		long timerFine;
 		
@@ -194,7 +194,7 @@ public class DistanceMatrix
 			
 				for (int x = 0; x < colNumber; x++)
 				{
-					Subtraction sub = DistanceMatrix.checkTypes(x);
+					Subtraction sub = DistanceMatrix.checkTypes(x,typesColumn);
 					
 					int subReturn=sub.subtracion(df.get(i, x), df.get(j, x));
 					
@@ -239,6 +239,9 @@ public class DistanceMatrix
 	 */
 	public static DataFrame<Object> concurrentCreateMatrix(int inizio,int dimensione,DataFrame<Object> completeDF)
 	{
+		List<Class<?>> typesColumn;
+		typesColumn=completeDF.dropna().types();
+		
 		long timerInizio=System.currentTimeMillis();
 		long timerFine;
 		
@@ -258,7 +261,7 @@ public class DistanceMatrix
 			
 				for (int x = 0; x < colNumber; x++)
 				{
-					Subtraction sub = DistanceMatrix.checkTypes(x);
+					Subtraction sub = DistanceMatrix.checkTypes(x,typesColumn);
 					
 					int subReturn=sub.subtracion(completeDF.get(i, x), completeDF.get(j, x));
 					
