@@ -17,7 +17,6 @@ public class WorkerMainClass
 	{
 		BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 		
-		//init tentative of cluster
 				Config config = ConfigFactory.parseString(
 						"akka.remote.netty.tcp.port=" + 2551).withFallback(
 								ConfigFactory.load());
@@ -31,7 +30,6 @@ public class WorkerMainClass
 					
 				} catch (IOException e)
 			    {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			    finally

@@ -113,6 +113,7 @@ public class DistanceMatrix
 	/**
 	 * Metodo che cerca tipo di elemento colonna e restituisce istanza dell'interfaccia per la sottrazione
 	 * @param indiceColonna
+	 * @param typesColumn
 	 * @return Subtraction istanza dell'interfaccia per la sottrazione
 	 */
 	private static Subtraction checkTypes(int indiceColonna,List<Class<?>> typesColumn)

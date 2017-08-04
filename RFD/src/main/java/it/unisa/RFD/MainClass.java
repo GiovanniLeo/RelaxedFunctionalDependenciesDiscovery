@@ -66,22 +66,18 @@ public class MainClass
 //		df = DistanceMatrix.alternativeLoadDF("first_dataset2.csv",',',"?",true,"dd/MM/yyyy",indiciData); 
 		df.show();
 		
-		//init tentative of cluster
 		Config config = ConfigFactory.parseString(
 				"akka.remote.netty.tcp.port=" + 2551).withFallback(
 						ConfigFactory.load());
 		
 		ActorSystem system = ActorSystem.create("SistemaAttoriRDFCluster",config);
-	    //end tentative of cluster
 		try 
 		{
 			final ClusterSingletonManagerSettings settings =ClusterSingletonManagerSettings.create(system);
-			system.actorOf(ClusterSingletonManager.props(MainActor.props(df,4),PoisonPill.getInstance(), settings), "AttorePrincipale");
+			system.actorOf(ClusterSingletonManager.props(MainActor.props(df),PoisonPill.getInstance(), settings), "AttorePrincipale");
 			
 			ClusterSingletonProxySettings proxySettings =ClusterSingletonProxySettings.create(system);
 			ActorRef proxyPrincipal=system.actorOf(ClusterSingletonProxy.props("/user/AttorePrincipale", proxySettings), "AttorePrincipaleProxy");
-			
-//			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
 			
 			System.out.println(">>> Press ENTER to continue <<<");
 		    console.readLine();
@@ -95,7 +91,6 @@ public class MainClass
 		} 
 		catch (Exception e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		finally

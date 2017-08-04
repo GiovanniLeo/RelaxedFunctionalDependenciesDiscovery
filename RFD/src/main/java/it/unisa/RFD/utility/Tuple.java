@@ -1,7 +1,11 @@
 package it.unisa.RFD.utility;
 
 import java.io.Serializable;
-
+/**
+ * Classe che rappresenta tupla di due interi
+ * @author Leo
+ *
+ */
 public class Tuple implements Serializable
 {
 

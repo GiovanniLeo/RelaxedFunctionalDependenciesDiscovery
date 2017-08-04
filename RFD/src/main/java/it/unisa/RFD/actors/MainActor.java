@@ -41,7 +41,7 @@ public class MainActor extends AbstractActor
 	private int countPart=0,countOrderedDM=0;
 	private DataFrame<Object> df;
 	private DataFrame<Object> completeDM;
-	private int threadNr=2;
+	private int threadNr=4;
 	private long timerInizio,timerFine;
 	private ArrayList<OrderedDM> listaDMOrdinati;
 	Cluster cluster = Cluster.get(getContext().getSystem());
@@ -53,19 +53,9 @@ public class MainActor extends AbstractActor
 	 * In fase di costruzione assegnamo le variabili di istanza e creiamo la nostra DM vuota.
 	 * 
 	 * @param dataFrame dataframe completo letto da file
-	 * @param threadNumber numero thread con cui si fa girare il programma...default:2
 	 */
-	public MainActor(DataFrame<Object> dataFrame,int threadNumber)
+	public MainActor(DataFrame<Object> dataFrame)
 	{
-		if(Runtime.getRuntime().availableProcessors()>=threadNumber)
-		{
-			this.threadNr=threadNumber;
-		}
-		else
-		{
-			log.info("Numero thread inserito troppo grande...default:2");
-		}
-		
 		this.df=dataFrame;
 		
 		this.completeDM=df.dropna();
@@ -80,19 +70,18 @@ public class MainActor extends AbstractActor
 	/**
 	 * Metodo statico per istanziare MainActor
 	 * @param dataFrame
-	 * @param threadNumber
 	 * @return reference a MainActor
 	 */
-	static public Props props(DataFrame<Object> dataFrame,int threadNumber)
+	static public Props props(DataFrame<Object> dataFrame)
 	{
-		return Props.create(MainActor.class,()->new MainActor(dataFrame,threadNumber));
+		return Props.create(MainActor.class,()->new MainActor(dataFrame));
 	}
 	
 	@Override
 	public void preStart() throws Exception 
 	{
 		log.info("Sono vivo");
-		cluster.subscribe(getSelf(),  MemberUp.class, UnreachableMember.class);
+		cluster.subscribe(getSelf(),  MemberUp.class, MemberRemoved.class);
 		super.postStop();
 	}
 
@@ -119,7 +108,6 @@ public class MainActor extends AbstractActor
 			ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.completeDM.size()-1), addresses).props(ConcurrentOrderedDMActor.props()));
 			for(int i=0; i<this.completeDM.size()-1; i++)
 			{
-//				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
 				routerRemote.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(SerializedDataFrame.serializeDF(completeDM),i), this.getSelf());
 			}
 		}
@@ -197,38 +185,30 @@ public class MainActor extends AbstractActor
 		return receiveBuilder()
 				.match(ConcurrenceDistanceMatrix.class, c->  //Creo il numero di thread necessari per la creazione di DM
 				{
+					this.threadNr=4*this.addresses.size();
+					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
+					
 					int dimension=df.length()/this.threadNr;
 					int lastStep= df.length()%this.threadNr;
 					int inizioCorrente=0;
-					
-					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
-					
+										
 					for(int i=0; i<this.threadNr ;i++)
 					{
 						if(i<this.threadNr-1)
 						{
 							
 							routerRemote.tell(new ConcurrentDMActor.CreateConcurrentDM(inizioCorrente,dimension,SerializedDataFrame.serializeDF(this.df)), this.getSelf());
-							
-//							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
-//							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension,this.df), this.getSelf());
-
-							
 							inizioCorrente+=dimension;
 						}
 						else
 						{
-//							ActorRef actor=this.getContext().actorOf(ConcurrentDMActor.props());
-//							actor.tell(new CreateConcurrentDM(inizioCorrente,dimension+lastStep,this.df), this.getSelf());
-							
 							routerRemote.tell(new ConcurrentDMActor.CreateConcurrentDM(inizioCorrente,dimension+lastStep,SerializedDataFrame.serializeDF(this.df)), this.getSelf());
 						}
-					}
-//					
+					}			
 					this.timerInizio=System.currentTimeMillis();
 					
 				})
-				.match(ReceivePartDM.class, r->  //Messggio con cui riceve parte della DM elaborata da ogni thread 
+				.match(ReceivePartDM.class, r->  //Messaggio con cui riceve parte della DM elaborata da ogni thread 
 				{
 					DataFrame<Object> dataFrameParziale=SerializedDataFrame.deserializeDataFrame(r.partialDM);
 					for(int i=0;i<dataFrameParziale.length();i++)
@@ -241,16 +221,7 @@ public class MainActor extends AbstractActor
 				})
 				.match(TestMessage.class, t->  //messaggio di test
 				{
-//					ActorRef routerRemote = getContext().actorOf(new RemoteRouterConfig(new RoundRobinPool(this.threadNr), addresses).props(ConcurrentDMActor.props()));
-					int totalInstances = this.threadNr;
-					int maxInstancesPerNode = 2;
-					boolean allowLocalRoutees = true;
-					ActorRef routerRemote = getContext().actorOf(new ClusterRouterPool(new RoundRobinPool(this.threadNr),new ClusterRouterPoolSettings(totalInstances, maxInstancesPerNode,
-					      allowLocalRoutees, Option.empty())).props(ConcurrentDMActor.props()));
-					for(int i=0; i<this.threadNr ;i++)
-					{
-						routerRemote.tell(new ConcurrentDMActor.TestMessage("ciao stocazzo: "+i), this.getSelf());
-					}
+					
 				})
 				.match(MemberUp.class, mUp -> 
 				{
@@ -258,7 +229,7 @@ public class MainActor extends AbstractActor
 			        this.addresses.add(mUp.member().address());
 			        System.out.println(addresses.toString());
 			    })
-				.match(UnreachableMember.class, mp -> 
+				.match(MemberRemoved.class, mp -> 
 				{
 			        log.info("Member is Removed: {}", mp.member());
 			        this.addresses.remove(mp.member().address());

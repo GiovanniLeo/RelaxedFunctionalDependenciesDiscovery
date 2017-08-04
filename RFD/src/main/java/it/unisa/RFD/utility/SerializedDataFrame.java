@@ -5,10 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import joinery.DataFrame;
-
+/**
+ * Classe per serializzazione di DataFrame joinery
+ * @author Giovanni Leo
+ *
+ */
 public class SerializedDataFrame {
 
-
+/**
+ * Metodo statico che serializza un DF
+ * @param df DataFrame
+ * @return DF serializzato
+ */
 	public static  ArrayList<ArrayList<Object>>  serializeDF(DataFrame<Object> df)
 	{
 		ArrayList<ArrayList<Object>> dataframeRow = new ArrayList<>();
@@ -40,7 +48,11 @@ public class SerializedDataFrame {
 
 
 	}
-
+/**
+ * Metodo per la deserializzazione di DataFrame joinery
+ * @param dataframeRow
+ * @return DF deserializzato
+ */
 	public static DataFrame<Object> deserializeDataFrame(ArrayList<ArrayList<Object>> dataframeRow)
 	{
 		DataFrame<Object> df = new DataFrame<Object>();
