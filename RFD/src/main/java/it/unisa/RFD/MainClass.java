@@ -61,7 +61,7 @@ public class MainClass
 //		else
 //			df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
-		df = DistanceMatrix.loadDF("hepatitis.csv",",","?",true); 
+		df = DistanceMatrix.loadDF("cora.csv",";","?",true); 
 //		indiciData.add(1);
 //		df = DistanceMatrix.alternativeLoadDF("first_dataset2.csv",',',"?",true,"dd/MM/yyyy",indiciData); 
 		df.show();
@@ -82,9 +82,9 @@ public class MainClass
 			System.out.println(">>> Press ENTER to continue <<<");
 		    console.readLine();
 		    
-		    proxyPrincipal.tell(new MainActor.TestMessage(), ActorRef.noSender());
+//		    proxyPrincipal.tell(new MainActor.TestMessage(), ActorRef.noSender());
 		    
-//		    proxyPrincipal.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
+		    proxyPrincipal.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
 		    
 			System.out.println(">>> Press ENTER to exit <<<");
 			console.readLine();
