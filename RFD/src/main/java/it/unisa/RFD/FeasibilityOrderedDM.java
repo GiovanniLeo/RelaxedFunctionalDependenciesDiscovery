@@ -44,14 +44,14 @@ public class FeasibilityOrderedDM {
 				valueCluster = (ArrayList<Integer>) cProvvisori.get(keyCluster).clone();
 				currentCluster = (int)dataframe.get(i, orderedDM.getRhs());
 			    keyCluster = "C"+currentCluster;
+			    
+			    if(currentCluster==0)
+				{
+					return FeasibilityOrderedDM.convertHashMapToTuple(cProvvisori, dataframe);
+				}
+			    
+			    cProvvisori.put(keyCluster, valueCluster);
 			}
-			
-			if(currentCluster==0)
-			{
-				return FeasibilityOrderedDM.convertHashMapToTuple(cProvvisori, dataframe);
-			}
-
-			cProvvisori.put(keyCluster, valueCluster);
 			
 			boolean verificata = false;
 			
@@ -87,7 +87,6 @@ public class FeasibilityOrderedDM {
 		
 		List<Object> firstRow = dm.row(tupla1);
 		List<Object> secondRow = dm.row(tupla2);
-		boolean domina = true;
 
 		for(int i=0;i<dm.size();i++)
 		{
@@ -97,12 +96,12 @@ public class FeasibilityOrderedDM {
 			if((firstElement-secondElement)<0)
 			{
 			
-				domina = false;
+				return false;
 			
 			}
 
 		}
-		return domina;
+		return true;
 	}
 	
 	private static HashMap<String,ArrayList<Tuple>> convertHashMapToTuple(HashMap<String,ArrayList<Integer>> cProvvisori, DataFrame<Object> dataframe)
