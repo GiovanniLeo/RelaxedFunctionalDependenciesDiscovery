@@ -53,7 +53,7 @@ public class MainClass
 //		else
 //			df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
-		df = DistanceMatrix.loadDF("datasetto.csv",",","?",true); 
+		df = DistanceMatrix.loadDF("balance-scale.csv",",","?",false); 
 //		indiciData.add(1);
 //		df = DistanceMatrix.alternativeLoadDF("first_dataset2.csv",',',"?",true,"dd/MM/yyyy",indiciData); 
 		df.show();

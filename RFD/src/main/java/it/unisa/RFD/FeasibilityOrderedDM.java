@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
 
 public class FeasibilityOrderedDM {
 
-	public static HashMap<String,ArrayList<Integer>> feasibilityTest(OrderedDM orderedDM)
+	public static HashMap<String,ArrayList<Tuple>> feasibilityTest(OrderedDM orderedDM)
 	{
 		
 		HashMap<String,ArrayList<Integer>> cProvvisori = new HashMap<>();
@@ -23,10 +24,8 @@ public class FeasibilityOrderedDM {
 		int currentCluster = (int) dataframe.get(lastRow, orderedDM.getRhs());
 		String keyCluster = "C"+currentCluster;
 
-		
 		if(currentCluster==0)
 		{
-		
 			return null;
 		}
 		else
@@ -36,6 +35,7 @@ public class FeasibilityOrderedDM {
 			valueCluster.add(lastRow);
 			cProvvisori.put(keyCluster, valueCluster);
 		}
+		
 		for(int i = lastRow-1;i>=0;i--)
 		{
 			
@@ -45,11 +45,11 @@ public class FeasibilityOrderedDM {
 				currentCluster = (int)dataframe.get(i, orderedDM.getRhs());
 			    keyCluster = "C"+currentCluster;
 			}
+			
 			if(currentCluster==0)
 			{
-				return cProvvisori;
+				return FeasibilityOrderedDM.convertHashMapToTuple(cProvvisori, dataframe);
 			}
-
 
 			cProvvisori.put(keyCluster, valueCluster);
 			
@@ -78,11 +78,10 @@ public class FeasibilityOrderedDM {
 				
 			}
 		}
-
-		return cProvvisori;
+		return FeasibilityOrderedDM.convertHashMapToTuple(cProvvisori, dataframe);
 	} 
 
-	public static boolean dominance(int tupla1, int tupla2, DataFrame<Object> dm)
+	private static boolean dominance(int tupla1, int tupla2, DataFrame<Object> dm)
 	{
 	
 		
@@ -104,5 +103,27 @@ public class FeasibilityOrderedDM {
 
 		}
 		return domina;
+	}
+	
+	private static HashMap<String,ArrayList<Tuple>> convertHashMapToTuple(HashMap<String,ArrayList<Integer>> cProvvisori, DataFrame<Object> dataframe)
+	{
+		HashMap<String,ArrayList<Tuple>> cDefinitivi = new HashMap<>();
+		
+		ArrayList<String> chiavi=new ArrayList<>();
+		chiavi.addAll(cProvvisori.keySet());
+		
+		for(int count=0;count<chiavi.size();count++)
+		{
+			ArrayList<Integer> interiC=cProvvisori.get(chiavi.get(count));
+			
+			ArrayList<Tuple> insiemeC=new ArrayList<>();
+			
+			for(int countJ=0; countJ<interiC.size();countJ++)
+			{
+				insiemeC.add((Tuple) dataframe.get(interiC.get(countJ), dataframe.size()-1));
+			}
+			cDefinitivi.put(chiavi.get(count), insiemeC);
+		}
+		return cDefinitivi;
 	}
 }
