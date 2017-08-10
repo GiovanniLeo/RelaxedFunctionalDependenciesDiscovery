@@ -10,11 +10,15 @@ import joinery.DataFrame;
 
 public class FeasibilityOrderedDM {
 
-	public static HashMap<String,ArrayList<Integer>> feasibilityTest(OrderedDM orderedDM){
+	public static HashMap<String,ArrayList<Integer>> feasibilityTest(OrderedDM orderedDM)
+	{
 		
 		HashMap<String,ArrayList<Integer>> cProvvisori = new HashMap<>();
+		ArrayList<Integer> valueCluster;
+		
 		DataFrame<Object> dataframe = orderedDM.getOrderedDM();
 		DataFrame<Object> dm = dataframe.retain(orderedDM.getLhs().toArray(new Object[orderedDM.getLhs().size()]));
+		
 		int lastRow = dm.length()-1;
 		int currentCluster = (int) dataframe.get(lastRow, orderedDM.getRhs());
 		String keyCluster = "C"+currentCluster;
@@ -27,8 +31,8 @@ public class FeasibilityOrderedDM {
 		}
 		else
 		{
-			 keyCluster = "C"+currentCluster;
-			ArrayList<Integer> valueCluster = new ArrayList<>();
+			keyCluster = "C"+currentCluster;
+			valueCluster = new ArrayList<>();
 			valueCluster.add(lastRow);
 			cProvvisori.put(keyCluster, valueCluster);
 		}
@@ -37,11 +41,9 @@ public class FeasibilityOrderedDM {
 			
 			if(currentCluster!=(int)dataframe.get(i, orderedDM.getRhs()))
 			{
-				ArrayList<Integer> valueCluster =cProvvisori.get(keyCluster);
+				valueCluster = (ArrayList<Integer>) cProvvisori.get(keyCluster).clone();
 				currentCluster = (int)dataframe.get(i, orderedDM.getRhs());
 			    keyCluster = "C"+currentCluster;
-		
-				cProvvisori.put(keyCluster, valueCluster);
 			}
 			if(currentCluster==0)
 			{
@@ -49,11 +51,10 @@ public class FeasibilityOrderedDM {
 			}
 
 
+			cProvvisori.put(keyCluster, valueCluster);
+			
 			boolean verificata = false;
-
-
-
-		
+			
 			Iterator<Integer> iterator = cProvvisori.get(keyCluster).iterator();
 			while (iterator.hasNext()) 
 			{
@@ -67,8 +68,6 @@ public class FeasibilityOrderedDM {
 				if(FeasibilityOrderedDM.dominance(secondaTupla, i, dm)==true)
 				{
 					iterator.remove();
-					
-
 				}
 
 
@@ -78,11 +77,6 @@ public class FeasibilityOrderedDM {
 				cProvvisori.get(keyCluster).add(i);
 				
 			}
-
-
-
-
-
 		}
 
 		return cProvvisori;
