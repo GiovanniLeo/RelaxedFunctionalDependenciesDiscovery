@@ -93,7 +93,8 @@ public class MainActor extends AbstractActor
 			
 			this.completeDM.show();
 			
-			for(int i=0; i<this.completeDM.size()-1; i++)
+			int index= this.completeDM.size()-1;
+			for(int i=0; i<index; i++)
 			{
 				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
 				act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,i), this.getSelf());
@@ -201,7 +202,8 @@ public class MainActor extends AbstractActor
 				})
 				.match(ReceivePartDM.class, r->  //Messggio con cui riceve parte della DM elaborata da ogni thread 
 				{
-					for(int i=0;i<r.partialDM.length();i++)
+					int index= r.partialDM.length();
+					for(int i=0;i<index;i++)
 					{
 						this.completeDM.append(r.partialDM.row(i));
 					}
