@@ -56,34 +56,34 @@ public class MainClass
 		df = DistanceMatrix.loadDF("datasetto.csv",",","?",true); 
 //		indiciData.add(1);
 //		df = DistanceMatrix.alternativeLoadDF("first_dataset2.csv",',',"?",true,"dd/MM/yyyy",indiciData); 
-		df.show();
-
-		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
-		dm.show();
+//		df.show();
+//
+//		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
+//		dm.show();
 //
 //		
-		OrderedDM oDM=DistanceMatrix.createOrderedDM(2, dm);
-		oDM.getOrderedDM().show();
-		System.out.println(FeasibilityOrderedDM.feasibilityTest(oDM).toString());
+//		OrderedDM oDM=DistanceMatrix.createOrderedDM(2, dm);
+//		oDM.getOrderedDM().show();
+//		System.out.println(FeasibilityOrderedDM.feasibilityTest(oDM).toString());
 		
-//		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
-//		try 
-//		{
-//			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
-//			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
-//			System.out.println(">>> Press ENTER to exit <<<");
-//		    System.in.read();
-//		} 
-//		catch (Exception e) 
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		finally
-//		{
-//			system.terminate();
-//			console.close();
-//		}
+		ActorSystem system = ActorSystem.create("SistemaAttoriRDF");
+		try 
+		{
+			ActorRef act=system.actorOf(MainActor.props(df,4),"AttorePrincipale");
+			act.tell(new MainActor.ConcurrenceDistanceMatrix(), ActorRef.noSender());
+			System.out.println(">>> Press ENTER to exit <<<");
+		    System.in.read();
+		} 
+		catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			system.terminate();
+			console.close();
+		}
 		
 
 	}
