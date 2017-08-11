@@ -8,32 +8,54 @@ import akka.actor.Props;
 import it.unisa.RFD.FeasibilityOrderedDM;
 import it.unisa.RFD.OrderedDM;
 import it.unisa.RFD.utility.Tuple;
-
-public class ConcurrentFeasibilityActor extends AbstractActor {
-
-	static public class CreateFeasibiity {
-		private OrderedDM orderedDM;
-		public CreateFeasibiity(OrderedDM orderedDM) {
-			this.orderedDM = orderedDM;
-		}
-
-	}
-	
+/**
+ * Attore per la gestione della fase feasibility
+ * @author 
+ *
+ */
+public class ConcurrentFeasibilityActor extends AbstractActor 
+{
+	/**
+	 * Costruttore vuoto
+	 */
 	public ConcurrentFeasibilityActor()
 	{
 		
-		
 	}
-	public static Props props() {
-		// TODO Auto-generated method stub
+	/**
+	 * Props per la creazione di istanza dell'attore
+	 * @return istanza ConcurrentFeasibilityActor
+	 */
+	public static Props props() 
+	{
 		return Props.create(ConcurrentFeasibilityActor.class);
 	}
-
+/**
+ * 
+ * Messaggio per la gestione del feasibility test
+ * @author 
+ * 
+ */
+	static public class CreateFeasibiity 
+	{
+		private OrderedDM orderedDM;
+		
+		public CreateFeasibiity(OrderedDM orderedDM) 
+		{
+			this.orderedDM = orderedDM;
+		}
+	}
+	/**
+	 * 
+	 * Builder per la gestione dei messaggi ricevuti
+	 * 
+	 */
 	@Override
-	public Receive createReceive() {
-		// TODO Auto-generated method stub
+	public Receive createReceive() 
+	{
 		return receiveBuilder()
-				.match(CreateFeasibiity.class, cf->{
+				.match(CreateFeasibiity.class, cf-> //Gestione feasibility test e risposta al mittente
+				{
 					OrderedDM dm = cf.orderedDM;
 					HashMap<String,ArrayList<Tuple>> hMap = FeasibilityOrderedDM.feasibilityTest(dm);
 					dm.setInsiemeC(hMap);
@@ -41,7 +63,4 @@ public class ConcurrentFeasibilityActor extends AbstractActor {
 				})
 				.build();
 	}
-
-	
-
 }

@@ -106,11 +106,14 @@ public class MainActor extends AbstractActor
 	{
 		countOrderedDM++;
 		System.out.println("Ricevuti:"+countOrderedDM+" Clusters");
+		
 		if(countOrderedDM==this.completeDM.size()-1)
 		{
 			this.timerFine=System.currentTimeMillis();
+			
 			System.out.println("Concluso in tempo Cluster: "+(this.timerFine-this.timerInizio));
 			this.listaDMOrdinati.get(1).getOrderedDM().show();
+			
 			for(int i=0; i<listaDMOrdinati.size(); i++)
 			{
 				ActorRef act=this.getContext().actorOf(ConcurrentFeasibilityActor.props());
@@ -125,6 +128,7 @@ public class MainActor extends AbstractActor
 	private void isFeasibilityComplete(OrderedDM orderedDM)
 	{
 		listaDMOrdinati.set(countFeasibility, orderedDM);
+		
 		countFeasibility++;
 		if(countFeasibility == this.listaDMOrdinati.size())
 		{
@@ -186,7 +190,11 @@ public class MainActor extends AbstractActor
 		{
 		}
 	}
-	
+	/**
+	 * Messaggio per la ricezione del feasibility test
+	 * @author 
+	 *
+	 */
 	static  public class ReciveFeasibility
 	{
 		private OrderedDM orderedDM;
@@ -194,10 +202,6 @@ public class MainActor extends AbstractActor
 		public ReciveFeasibility(OrderedDM orderedDM) {
 			this.orderedDM = orderedDM;
 		}
-		
-		
-	
-		
 	}
 	
 	/**
