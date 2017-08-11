@@ -91,11 +91,37 @@ public class MainActor extends AbstractActor
 			
 			this.completeDM.show();
 			
-			int index= this.completeDM.size()-1;
-			for(int i=0; i<index; i++)
+//			int index= this.completeDM.size()-1;
+//			for(int i=0; i<index; i++)
+//			{
+//				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
+//				act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,i), this.getSelf());
+//			}
+			
+			int dimension=(this.completeDM.size()-1)/this.threadNr;
+			int lastStep= (this.completeDM.size()-1)%this.threadNr;
+			int index= 0;
+			
+			for(int i=0; i<this.threadNr ;i++)
 			{
 				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
-				act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,i), this.getSelf());
+				
+				if(i<this.threadNr-1)
+				{
+					for(int j=0;j<dimension;j++)
+					{
+						act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,index), this.getSelf());
+						index++;
+					}
+				}
+				else
+				{
+					for(int x=0;x<dimension+lastStep;x++)
+					{
+						act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,index), this.getSelf());
+						index++;
+					}
+				}
 			}
 		}
 	}
@@ -114,11 +140,39 @@ public class MainActor extends AbstractActor
 			System.out.println("Concluso in tempo Cluster: "+(this.timerFine-this.timerInizio));
 			this.listaDMOrdinati.get(1).getOrderedDM().show();
 			
-			for(int i=0; i<listaDMOrdinati.size(); i++)
+//			for(int i=0; i<listaDMOrdinati.size(); i++)
+//			{
+//				ActorRef act=this.getContext().actorOf(ConcurrentFeasibilityActor.props());
+//				act.tell(new ConcurrentFeasibilityActor.CreateFeasibiity(listaDMOrdinati.get(i)),
+//																				 this.getSelf());
+//			}
+			
+			int dimension=(listaDMOrdinati.size())/this.threadNr;
+			int lastStep= (listaDMOrdinati.size())%this.threadNr;
+			int index= 0;
+			
+			for(int i=0; i<this.threadNr ;i++)
 			{
 				ActorRef act=this.getContext().actorOf(ConcurrentFeasibilityActor.props());
-				act.tell(new ConcurrentFeasibilityActor.CreateFeasibiity(listaDMOrdinati.get(i)),
-																				 this.getSelf());
+				
+				if(i<this.threadNr-1)
+				{
+					for(int j=0;j<dimension;j++)
+					{
+						act.tell(new ConcurrentFeasibilityActor.CreateFeasibiity(listaDMOrdinati.get(index)),
+								 this.getSelf());
+						index++;
+					}
+				}
+				else
+				{
+					for(int x=0;x<dimension+lastStep;x++)
+					{
+						act.tell(new ConcurrentFeasibilityActor.CreateFeasibiity(listaDMOrdinati.get(index)),
+								 this.getSelf());
+						index++;
+					}
+				}
 			}
 		}
 	}
@@ -133,9 +187,9 @@ public class MainActor extends AbstractActor
 		if(countFeasibility == this.listaDMOrdinati.size())
 		{
 			this.timerFine=System.currentTimeMillis();
-			System.out.println(listaDMOrdinati.get(1)+" \nsize="+listaDMOrdinati.size());
+			System.out.println(listaDMOrdinati.get(0)+" \nsize="+listaDMOrdinati.size());
 
-			System.out.println("Concluso in tempo Feasability: "+(this.timerFine-this.timerInizio));
+			System.out.println("Concluso in tempo Feasibility: "+(this.timerFine-this.timerInizio));
 		}
 	}
 	/**
