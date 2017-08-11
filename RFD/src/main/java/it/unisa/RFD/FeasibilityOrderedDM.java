@@ -8,11 +8,24 @@ import java.util.stream.Collectors;
 
 import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
-
-public class FeasibilityOrderedDM {
-
+/**
+ * Classe di utility per il feasibility test
+ * @author 
+ *
+ */
+public class FeasibilityOrderedDM 
+{
+/**
+ * Metodo che permette di calcolare l'insieme c dell'orderedDM dato come parametro
+ * @param orderedDM
+ * @return hashMap contenente l'insieme c
+ */
 	public static HashMap<String,ArrayList<Tuple>> feasibilityTest(OrderedDM orderedDM)
 	{
+		if(orderedDM.getOrderedDM().isEmpty())
+		{
+			return null;
+		}
 		
 		HashMap<String,ArrayList<Integer>> cProvvisori = new HashMap<>();
 		ArrayList<Integer> valueCluster;
@@ -80,7 +93,13 @@ public class FeasibilityOrderedDM {
 		}
 		return FeasibilityOrderedDM.convertHashMapToTuple(cProvvisori, dataframe);
 	} 
-
+/**
+ * Metodo che permette di verificare se tupla1 domina tupla2, in questo caso ritorniamo ture
+ * @param tupla1
+ * @param tupla2
+ * @param dm
+ * @return boolean
+ */
 	private static boolean dominance(int tupla1, int tupla2, DataFrame<Object> dm)
 	{
 	
@@ -103,7 +122,12 @@ public class FeasibilityOrderedDM {
 		}
 		return true;
 	}
-	
+	/**
+	 * Metodo che permette di convertire un hashMap dell'insieme c che identifica le righe attraverso gli indici, in hashMap dell'insieme c che identifica le righe con l'id. 
+	 * @param cProvvisori
+	 * @param dataframe
+	 * @return hashMap dell'insieme c con tuple come identificativo delle righe
+	 */
 	private static HashMap<String,ArrayList<Tuple>> convertHashMapToTuple(HashMap<String,ArrayList<Integer>> cProvvisori, DataFrame<Object> dataframe)
 	{
 		HashMap<String,ArrayList<Tuple>> cDefinitivi = new HashMap<>();
