@@ -30,6 +30,7 @@ public class ConcurrentDMActor extends AbstractActor
 	{
 		return Props.create(ConcurrentDMActor.class);
 	}
+	
 	/**
 	 * Messaggio per la creazione della DM parziale
 	 * @author luigidurso
@@ -51,14 +52,14 @@ public class ConcurrentDMActor extends AbstractActor
 	@Override
 	public void preStart() throws Exception 
 	{
-		log.info("Sono vivo");
+		log.info("Sono vivo concurrentDMActor");
 		super.postStop();
 	}
 
 	@Override
 	public void postStop() throws Exception 
 	{
-		log.info("Sono morto");
+		log.info("Sono morto concurrentDMActor");
 		super.postStop();
 	}
 	/**

@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import it.unisa.RFD.FeasibilityOrderedDM;
 import it.unisa.RFD.OrderedDM;
 import it.unisa.RFD.utility.Tuple;
@@ -15,6 +17,7 @@ import it.unisa.RFD.utility.Tuple;
  */
 public class ConcurrentFeasibilityActor extends AbstractActor 
 {
+	private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	/**
 	 * Costruttore vuoto
 	 */
@@ -29,6 +32,19 @@ public class ConcurrentFeasibilityActor extends AbstractActor
 	public static Props props() 
 	{
 		return Props.create(ConcurrentFeasibilityActor.class);
+	}
+	@Override
+	public void preStart() throws Exception 
+	{
+		log.info("Sono vivo concurrentFeasibilityActor");
+		super.postStop();
+	}
+
+	@Override
+	public void postStop() throws Exception 
+	{
+		log.info("Sono morto concurrentFeasibilityActor");
+		super.postStop();
 	}
 /**
  * 

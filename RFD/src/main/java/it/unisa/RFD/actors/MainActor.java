@@ -138,7 +138,7 @@ public class MainActor extends AbstractActor
 			this.timerFine=System.currentTimeMillis();
 			
 			System.out.println("Concluso in tempo Cluster: "+(this.timerFine-this.timerInizio));
-			this.listaDMOrdinati.get(1).getOrderedDM().show();
+			this.listaDMOrdinati.get(2).getOrderedDM().show();
 			
 //			for(int i=0; i<listaDMOrdinati.size(); i++)
 //			{
@@ -184,6 +184,8 @@ public class MainActor extends AbstractActor
 		listaDMOrdinati.set(countFeasibility, orderedDM);
 		
 		countFeasibility++;
+		System.out.println("Ricevuti:"+countFeasibility+" Feasibility orderedDM");
+		
 		if(countFeasibility == this.listaDMOrdinati.size())
 		{
 			this.timerFine=System.currentTimeMillis();
