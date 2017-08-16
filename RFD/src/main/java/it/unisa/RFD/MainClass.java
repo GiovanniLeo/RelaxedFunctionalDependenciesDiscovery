@@ -53,9 +53,9 @@ public class MainClass
 //		else
 //			df = DistanceMatrix.loadDF(nameCSV,separatorCSV,nullCharacterCSV,false);
 
-//		df = DistanceMatrix.loadDF("cora.csv",";","?",true); 
-		indiciData.add(1);
-		df = DistanceMatrix.alternativeLoadDF("crawled-tweets.csv",';',"?",true,"E MMM dd HH:mm:ss Z yyyy",indiciData); 
+		df = DistanceMatrix.loadDF("chess.csv",",","?",true); 
+//		indiciData.add(1);
+//		df = DistanceMatrix.alternativeLoadDF("crawled-tweets.csv",';',"?",true,"E MMM dd HH:mm:ss Z yyyy",indiciData); 
 		df.show();
 //
 //		DataFrame<Object> dm = DistanceMatrix.createMatrix(df);
