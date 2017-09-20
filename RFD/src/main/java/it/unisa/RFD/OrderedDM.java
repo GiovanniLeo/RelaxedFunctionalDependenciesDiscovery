@@ -1,7 +1,9 @@
 package it.unisa.RFD;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
 /**
  * Classe rappresentante la distance matrix ordinata per RHS e divisa in cluster
@@ -13,6 +15,8 @@ public class OrderedDM
 	private DataFrame<Object> orderedDM;
 	private ArrayList<Object> lhs;
 	private int rhs;
+	private HashMap<String,ArrayList<Tuple>> insiemeC;
+	
 	/**
 	 * Costruttore che prende DM ordinata e indici per RHS e LHS
 	 * @param orderedDistanceM
@@ -24,6 +28,7 @@ public class OrderedDM
 		this.orderedDM=orderedDistanceM;
 		this.lhs=indiciLHS;
 		this.rhs=indiceRHS;
+		this.insiemeC=null;
 	}
 	/**
 	 * Getter DM
@@ -73,5 +78,27 @@ public class OrderedDM
 	{
 		this.rhs = rhs;
 	}
+	/**
+	 * Getter insiemeC
+	 * @return insiemeC
+	 */
+	public HashMap<String,ArrayList<Tuple>> getInsiemeC() 
+	{
+		return insiemeC;
+	}
+	/**
+	 * Setter insiemeC
+	 * @param insiemeC
+	 */
+	public void setInsiemeC(HashMap<String,ArrayList<Tuple>> insiemeC) 
+	{
+		this.insiemeC = insiemeC;
+	}
+	@Override
+	public String toString() {
+		return "OrderedDM [lhs=" + lhs + ", rhs=" + rhs + ", insiemeC=" + insiemeC + "]";
+	}
+	
+	
 
 }

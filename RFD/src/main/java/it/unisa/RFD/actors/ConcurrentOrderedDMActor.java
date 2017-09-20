@@ -2,6 +2,8 @@ package it.unisa.RFD.actors;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import it.unisa.RFD.DistanceMatrix;
 import it.unisa.RFD.actors.MainActor.ReceiveOrderedDM;
 import joinery.DataFrame;
@@ -12,6 +14,7 @@ import joinery.DataFrame;
  */
 public class ConcurrentOrderedDMActor extends AbstractActor 
 {
+	private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	/**
 	 * Costruttore vuoto
 	 */
@@ -26,6 +29,19 @@ public class ConcurrentOrderedDMActor extends AbstractActor
 	public static Props props()
 	{
 		return Props.create(ConcurrentOrderedDMActor.class);
+	}
+	@Override
+	public void preStart() throws Exception 
+	{
+		log.info("Sono vivo concurrentOrderedDMActor");
+		super.postStop();
+	}
+
+	@Override
+	public void postStop() throws Exception 
+	{
+		log.info("Sono morto concurrentOrderedDMActor");
+		super.postStop();
 	}
 	/**
 	 * Messaggio per la creazione di DM ordinata

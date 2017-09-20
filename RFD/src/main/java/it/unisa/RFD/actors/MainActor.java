@@ -1,11 +1,8 @@
 package it.unisa.RFD.actors;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
-
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
@@ -21,12 +18,13 @@ public class MainActor extends AbstractActor
 {
 	
 	private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
-	private int countPart=0,countOrderedDM=0;
+	private int countPart=0,countOrderedDM=0,countFeasibility=0;
 	private DataFrame<Object> df;
 	private DataFrame<Object> completeDM;
 	private int threadNr=2;
 	private long timerInizio,timerFine;
 	private ArrayList<OrderedDM> listaDMOrdinati;
+	
 	
 	
 	/**
@@ -93,10 +91,37 @@ public class MainActor extends AbstractActor
 			
 			this.completeDM.show();
 			
-			for(int i=0; i<this.completeDM.size()-1; i++)
+//			int index= this.completeDM.size()-1;
+//			for(int i=0; i<index; i++)
+//			{
+//				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
+//				act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,i), this.getSelf());
+//			}
+			
+			int dimension=(this.completeDM.size()-1)/this.threadNr;
+			int lastStep= (this.completeDM.size()-1)%this.threadNr;
+			int index= 0;
+			
+			for(int i=0; i<this.threadNr ;i++)
 			{
 				ActorRef act=this.getContext().actorOf(ConcurrentOrderedDMActor.props());
-				act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,i), this.getSelf());
+				
+				if(i<this.threadNr-1)
+				{
+					for(int j=0;j<dimension;j++)
+					{
+						act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,index), this.getSelf());
+						index++;
+					}
+				}
+				else
+				{
+					for(int x=0;x<dimension+lastStep;x++)
+					{
+						act.tell(new ConcurrentOrderedDMActor.CreateOrderedDM(completeDM,index), this.getSelf());
+						index++;
+					}
+				}
 			}
 		}
 	}
@@ -106,11 +131,67 @@ public class MainActor extends AbstractActor
 	private void isOrderedDMComplete()
 	{
 		countOrderedDM++;
+		System.out.println("Ricevuti:"+countOrderedDM+" Clusters");
+		
 		if(countOrderedDM==this.completeDM.size()-1)
 		{
 			this.timerFine=System.currentTimeMillis();
+			
 			System.out.println("Concluso in tempo Cluster: "+(this.timerFine-this.timerInizio));
-			this.listaDMOrdinati.get(1).getOrderedDM().show();
+			this.listaDMOrdinati.get(2).getOrderedDM().show();
+			
+//			for(int i=0; i<listaDMOrdinati.size(); i++)
+//			{
+//				ActorRef act=this.getContext().actorOf(ConcurrentFeasibilityActor.props());
+//				act.tell(new ConcurrentFeasibilityActor.CreateFeasibiity(listaDMOrdinati.get(i)),
+//																				 this.getSelf());
+//			}
+			
+			int dimension=(listaDMOrdinati.size())/this.threadNr;
+			int lastStep= (listaDMOrdinati.size())%this.threadNr;
+			int index= 0;
+			
+			for(int i=0; i<this.threadNr ;i++)
+			{
+				ActorRef act=this.getContext().actorOf(ConcurrentFeasibilityActor.props());
+				
+				if(i<this.threadNr-1)
+				{
+					for(int j=0;j<dimension;j++)
+					{
+						act.tell(new ConcurrentFeasibilityActor.CreateFeasibiity(listaDMOrdinati.get(index)),
+								 this.getSelf());
+						index++;
+					}
+				}
+				else
+				{
+					for(int x=0;x<dimension+lastStep;x++)
+					{
+						act.tell(new ConcurrentFeasibilityActor.CreateFeasibiity(listaDMOrdinati.get(index)),
+								 this.getSelf());
+						index++;
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Metodo per l'attesa del completamento del feasibility test
+	 */
+	private void isFeasibilityComplete(OrderedDM orderedDM)
+	{
+		listaDMOrdinati.set(countFeasibility, orderedDM);
+		
+		countFeasibility++;
+		System.out.println("Ricevuti:"+countFeasibility+" Feasibility orderedDM");
+		
+		if(countFeasibility == this.listaDMOrdinati.size())
+		{
+			this.timerFine=System.currentTimeMillis();
+			System.out.println(listaDMOrdinati.get(0)+" \nsize="+listaDMOrdinati.size());
+
+			System.out.println("Concluso in tempo Feasibility: "+(this.timerFine-this.timerInizio));
 		}
 	}
 	/**
@@ -122,6 +203,7 @@ public class MainActor extends AbstractActor
 	{
 		public ConcurrenceDistanceMatrix()
 		{
+			
 		}
 	}
 	/**
@@ -165,6 +247,20 @@ public class MainActor extends AbstractActor
 		}
 	}
 	/**
+	 * Messaggio per la ricezione del feasibility test
+	 * @author 
+	 *
+	 */
+	static  public class ReciveFeasibility
+	{
+		private OrderedDM orderedDM;
+
+		public ReciveFeasibility(OrderedDM orderedDM) {
+			this.orderedDM = orderedDM;
+		}
+	}
+	
+	/**
 	 * Builder per la ricezione dei messaggi
 	 */
 	@Override
@@ -201,7 +297,8 @@ public class MainActor extends AbstractActor
 				})
 				.match(ReceivePartDM.class, r->  //Messggio con cui riceve parte della DM elaborata da ogni thread 
 				{
-					for(int i=0;i<r.partialDM.length();i++)
+					int index= r.partialDM.length();
+					for(int i=0;i<index;i++)
 					{
 						this.completeDM.append(r.partialDM.row(i));
 					}
@@ -219,7 +316,12 @@ public class MainActor extends AbstractActor
 					this.listaDMOrdinati.add(rc.orderedDM);
 					this.isOrderedDMComplete();
 					
-				}).build();
+				})
+				.match(ReciveFeasibility.class, rf-> /*Messaggio che riceve OrderedDM con inseime C(Hashmap)*/
+				{
+					this.isFeasibilityComplete(rf.orderedDM);
+				})
+				.build();
 	}
 
 }
