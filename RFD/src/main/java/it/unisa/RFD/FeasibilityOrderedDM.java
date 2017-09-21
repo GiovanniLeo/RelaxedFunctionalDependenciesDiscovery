@@ -1,10 +1,9 @@
 package it.unisa.RFD;
 
-import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
-
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
@@ -20,14 +19,14 @@ public class FeasibilityOrderedDM
  * @param orderedDM
  * @return hashMap contenente l'insieme c
  */
-	public static HashMap<String,ObjectArrayList<Tuple>> feasibilityTest(OrderedDM orderedDM)
+	public static Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> feasibilityTest(OrderedDM orderedDM)
 	{
 		if(orderedDM.getOrderedDM().isEmpty())
 		{
 			return null;
 		}
 		
-		HashMap<String,ObjectArrayList<Integer>> cProvvisori = new HashMap<>();
+		Object2ObjectOpenHashMap<String,ObjectArrayList<Integer>> cProvvisori = new Object2ObjectOpenHashMap<>();
 		ObjectArrayList<Integer> valueCluster;
 		
 		DataFrame<Object> dataframe = orderedDM.getOrderedDM();
@@ -128,9 +127,9 @@ public class FeasibilityOrderedDM
 	 * @param dataframe
 	 * @return hashMap dell'insieme c con tuple come identificativo delle righe
 	 */
-	private static HashMap<String,ObjectArrayList<Tuple>> convertHashMapToTuple(HashMap<String,ObjectArrayList<Integer>> cProvvisori, DataFrame<Object> dataframe)
+	private static Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> convertHashMapToTuple(Object2ObjectOpenHashMap<String,ObjectArrayList<Integer>> cProvvisori, DataFrame<Object> dataframe)
 	{
-		HashMap<String,ObjectArrayList<Tuple>> cDefinitivi = new HashMap<>();
+		Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> cDefinitivi = new Object2ObjectOpenHashMap<>();
 		
 		ObjectArrayList<String> chiavi=new ObjectArrayList<>();
 		chiavi.addAll(cProvvisori.keySet());

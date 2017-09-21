@@ -1,8 +1,9 @@
 package it.unisa.RFD;
 
 
-import java.util.HashMap;
 
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
@@ -16,7 +17,7 @@ public class OrderedDM
 	private DataFrame<Object> orderedDM;
 	private ObjectArrayList<Object> lhs;
 	private int rhs;
-	private HashMap<String,ObjectArrayList<Tuple>> insiemeC;
+	private Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> insiemeC;
 	
 	/**
 	 * Costruttore che prende DM ordinata e indici per RHS e LHS
@@ -83,7 +84,7 @@ public class OrderedDM
 	 * Getter insiemeC
 	 * @return insiemeC
 	 */
-	public HashMap<String,ObjectArrayList<Tuple>> getInsiemeC() 
+	public Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> getInsiemeC() 
 	{
 		return insiemeC;
 	}
@@ -91,7 +92,7 @@ public class OrderedDM
 	 * Setter insiemeC
 	 * @param insiemeC
 	 */
-	public void setInsiemeC(HashMap<String,ObjectArrayList<Tuple>> insiemeC) 
+	public void setInsiemeC(Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> insiemeC) 
 	{
 		this.insiemeC = insiemeC;
 	}

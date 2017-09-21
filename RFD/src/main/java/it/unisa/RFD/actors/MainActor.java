@@ -1,11 +1,12 @@
 package it.unisa.RFD.actors;
 
-import java.util.ArrayList;
+
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unisa.RFD.OrderedDM;
 import it.unisa.RFD.actors.ConcurrentDMActor.CreateConcurrentDM;
 import joinery.DataFrame;
@@ -23,7 +24,7 @@ public class MainActor extends AbstractActor
 	private DataFrame<Object> completeDM;
 	private int threadNr=2;
 	private long timerInizio,timerFine;
-	private ArrayList<OrderedDM> listaDMOrdinati;
+	private ObjectArrayList<OrderedDM> listaDMOrdinati;
 	
 	
 	
@@ -51,7 +52,7 @@ public class MainActor extends AbstractActor
 		this.completeDM=completeDM.slice(0,0);
 		this.completeDM=completeDM.add("Id");
 		
-		this.listaDMOrdinati=new ArrayList<>();
+		this.listaDMOrdinati=new ObjectArrayList<>();
 		
 	}
 	/**
