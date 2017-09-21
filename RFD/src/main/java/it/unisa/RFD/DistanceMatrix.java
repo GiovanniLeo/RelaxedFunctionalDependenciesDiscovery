@@ -4,7 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import com.opencsv.CSVReader;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unisa.RFD.utility.DateSubtraction;
 import it.unisa.RFD.utility.IntAbsoluteSubtraction;
 import it.unisa.RFD.utility.StringSubtraction;
@@ -57,7 +58,7 @@ public class DistanceMatrix
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public static DataFrame<Object> alternativeLoadDF(String nameCSV,char separator,String naString,boolean hasHeader,String dateFormat,ArrayList<Integer> colDate) throws IOException, ParseException
+	public static DataFrame<Object> alternativeLoadDF(String nameCSV,char separator,String naString,boolean hasHeader,String dateFormat,ObjectArrayList<Integer> colDate) throws IOException, ParseException
 	{
 		CSVReader reader = new CSVReader(new FileReader(nameCSV), separator);
 		DataFrame<Object> df;
@@ -190,7 +191,7 @@ public class DistanceMatrix
 			for (int j=i+1; j < rowNumber; j++) 
 			{
 				
-				ArrayList<Object> list = new ArrayList<>();
+				ObjectArrayList<Object> list = new ObjectArrayList<>();
 			
 				for (int x = 0; x < colNumber; x++)
 				{
@@ -254,7 +255,7 @@ public class DistanceMatrix
 			for (int j=i+1; j < rowNumberComplete; j++) 
 			{
 				
-				ArrayList<Object> list = new ArrayList<>();
+				ObjectArrayList<Object> list = new ObjectArrayList<>();
 			
 				for (int x = 0; x < colNumber; x++)
 				{
@@ -292,7 +293,7 @@ public class DistanceMatrix
 	 */
 	public static OrderedDM createOrderedDM(int indiceRHS,DataFrame<Object> dm)
 	{
-		ArrayList<Object> indiciColonne=new ArrayList<>();
+		ObjectArrayList<Object> indiciColonne=new ObjectArrayList<>();
 		indiciColonne.addAll(dm.columns());
 		indiciColonne.remove(dm.size()-1);
 		indiciColonne.remove(indiceRHS);

@@ -1,6 +1,6 @@
 package it.unisa.RFD.actors;
 
-import java.util.ArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.HashMap;
 
 import akka.actor.AbstractActor;
@@ -73,7 +73,7 @@ public class ConcurrentFeasibilityActor extends AbstractActor
 				.match(CreateFeasibiity.class, cf-> //Gestione feasibility test e risposta al mittente
 				{
 					OrderedDM dm = cf.orderedDM;
-					HashMap<String,ArrayList<Tuple>> hMap = FeasibilityOrderedDM.feasibilityTest(dm);
+					HashMap<String,ObjectArrayList<Tuple>> hMap = FeasibilityOrderedDM.feasibilityTest(dm);
 					dm.setInsiemeC(hMap);
 					this.getSender().tell(new MainActor.ReciveFeasibility(dm),this.getSelf());
 				})

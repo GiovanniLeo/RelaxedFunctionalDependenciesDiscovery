@@ -1,8 +1,9 @@
 package it.unisa.RFD;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
 /**
@@ -13,9 +14,9 @@ import joinery.DataFrame;
 public class OrderedDM 
 {
 	private DataFrame<Object> orderedDM;
-	private ArrayList<Object> lhs;
+	private ObjectArrayList<Object> lhs;
 	private int rhs;
-	private HashMap<String,ArrayList<Tuple>> insiemeC;
+	private HashMap<String,ObjectArrayList<Tuple>> insiemeC;
 	
 	/**
 	 * Costruttore che prende DM ordinata e indici per RHS e LHS
@@ -23,7 +24,7 @@ public class OrderedDM
 	 * @param indiciLHS
 	 * @param indiceRHS
 	 */
-	public OrderedDM(DataFrame<Object> orderedDistanceM,ArrayList<Object> indiciLHS,int indiceRHS)
+	public OrderedDM(DataFrame<Object> orderedDistanceM,ObjectArrayList<Object> indiciLHS,int indiceRHS)
 	{
 		this.orderedDM=orderedDistanceM;
 		this.lhs=indiciLHS;
@@ -50,7 +51,7 @@ public class OrderedDM
 	 * Getter indici LHS
 	 * @return lhs 
 	 */
-	public ArrayList<Object> getLhs() 
+	public ObjectArrayList<Object> getLhs() 
 	{
 		return lhs;
 	}
@@ -58,7 +59,7 @@ public class OrderedDM
 	 * Setter indici LHS
 	 * @param lhs
 	 */
-	public void setLhs(ArrayList<Object> lhs) 
+	public void setLhs(ObjectArrayList<Object> lhs) 
 	{
 		this.lhs = lhs;
 	}
@@ -82,7 +83,7 @@ public class OrderedDM
 	 * Getter insiemeC
 	 * @return insiemeC
 	 */
-	public HashMap<String,ArrayList<Tuple>> getInsiemeC() 
+	public HashMap<String,ObjectArrayList<Tuple>> getInsiemeC() 
 	{
 		return insiemeC;
 	}
@@ -90,7 +91,7 @@ public class OrderedDM
 	 * Setter insiemeC
 	 * @param insiemeC
 	 */
-	public void setInsiemeC(HashMap<String,ArrayList<Tuple>> insiemeC) 
+	public void setInsiemeC(HashMap<String,ObjectArrayList<Tuple>> insiemeC) 
 	{
 		this.insiemeC = insiemeC;
 	}
