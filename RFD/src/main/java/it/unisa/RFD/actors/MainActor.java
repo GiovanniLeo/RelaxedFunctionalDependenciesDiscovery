@@ -1,14 +1,19 @@
 package it.unisa.RFD.actors;
 
 
+
+import java.util.SortedSet;
+import java.util.TreeSet;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unisa.RFD.OrderedDM;
 import it.unisa.RFD.actors.ConcurrentDMActor.CreateConcurrentDM;
+import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
 /**
  * Attore principale che gestisce la parallelizzazione 
@@ -139,7 +144,7 @@ public class MainActor extends AbstractActor
 			this.timerFine=System.currentTimeMillis();
 			
 			System.out.println("Concluso in tempo Cluster: "+(this.timerFine-this.timerInizio));
-			this.listaDMOrdinati.get(2).getOrderedDM().show();
+			this.listaDMOrdinati.get(1).getOrderedDM().show();
 			
 //			for(int i=0; i<listaDMOrdinati.size(); i++)
 //			{
@@ -190,9 +195,23 @@ public class MainActor extends AbstractActor
 		if(countFeasibility == this.listaDMOrdinati.size())
 		{
 			this.timerFine=System.currentTimeMillis();
-			System.out.println(listaDMOrdinati.get(0)+" \nsize="+listaDMOrdinati.size());
+			System.out.println(listaDMOrdinati.get(1)+" \nsize="+listaDMOrdinati.size());
 
 			System.out.println("Concluso in tempo Feasibility: "+(this.timerFine-this.timerInizio));
+			
+			int somma=0;
+			for(int c=0;c<listaDMOrdinati.size();c++)
+			{
+				Object2ObjectOpenHashMap<String, ObjectArrayList<Tuple>>  hashMapInsiemeC=listaDMOrdinati.get(c).getInsiemeC();
+				
+				SortedSet<String> keys = new TreeSet<String>(hashMapInsiemeC.keySet());
+				
+				System.out.println("C considerato : "+keys.first());
+				
+				ObjectArrayList<Tuple> a= hashMapInsiemeC.get(keys.first());
+				somma+=a.size();
+			}
+			System.out.println("Totale insiemi C: "+somma);
 		}
 	}
 	/**
