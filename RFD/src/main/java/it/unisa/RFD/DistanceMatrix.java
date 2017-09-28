@@ -100,6 +100,7 @@ public class DistanceMatrix
 				
 				
 			}
+			//inserire else con richiamo funzione normale loadDF nel caso non ci siano date
 			
 			df.append(riga);
 	    }
@@ -128,27 +129,13 @@ public class DistanceMatrix
 			sottrazione=new StringSubtraction();
 			break;
 			
-		case "Long":
-			
-			sottrazione=new IntAbsoluteSubtraction();
-			break;
-			
-		case "Double":
-			
-			sottrazione=new IntAbsoluteSubtraction();
-			break;
-			
-		case "Object":
-			
-			sottrazione=new IntAbsoluteSubtraction();
-			break;
-			
 		case "Date":
 			
 			sottrazione=new DateSubtraction();
 			break;
 
-		default:
+		default: //Number
+			sottrazione=new IntAbsoluteSubtraction();
 			break;
 		}
 		
@@ -292,8 +279,8 @@ public class DistanceMatrix
 	{
 		ObjectArrayList<Object> indiciColonne=new ObjectArrayList<>();
 		indiciColonne.addAll(dm.columns());
-		indiciColonne.remove(dm.size()-1);
-		indiciColonne.remove(indiceRHS);
+		indiciColonne.remove(dm.size()-1); //rimozione colonna id
+		indiciColonne.remove(indiceRHS); //rimozione colonna rhs
 		
 		return new OrderedDM(dm.sortBy(indiceRHS).groupBy(indiceRHS), indiciColonne, indiceRHS);
 	}

@@ -26,7 +26,7 @@ public class FeasibilityOrderedDM
 			return null;
 		}
 		
-		Object2ObjectOpenHashMap<String,ObjectArrayList<Integer>> cProvvisori = new Object2ObjectOpenHashMap<>();
+		Object2ObjectOpenHashMap<String,ObjectArrayList<Integer>> cProvvisori = new Object2ObjectOpenHashMap<>(); //lavoriamo non su Tuple ma su int
 		ObjectArrayList<Integer> valueCluster;
 		
 		DataFrame<Object> dataframe = orderedDM.getOrderedDM();
