@@ -1,11 +1,10 @@
 package it.unisa.RFD;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
-
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unisa.RFD.utility.Tuple;
 import joinery.DataFrame;
 /**
@@ -20,15 +19,15 @@ public class FeasibilityOrderedDM
  * @param orderedDM
  * @return hashMap contenente l'insieme c
  */
-	public static HashMap<String,ArrayList<Tuple>> feasibilityTest(OrderedDM orderedDM)
+	public static Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> feasibilityTest(OrderedDM orderedDM)
 	{
 		if(orderedDM.getOrderedDM().isEmpty())
 		{
 			return null;
 		}
 		
-		HashMap<String,ArrayList<Integer>> cProvvisori = new HashMap<>();
-		ArrayList<Integer> valueCluster;
+		Object2ObjectOpenHashMap<String,ObjectArrayList<Integer>> cProvvisori = new Object2ObjectOpenHashMap<>(); //lavoriamo non su Tuple ma su int
+		ObjectArrayList<Integer> valueCluster;
 		
 		DataFrame<Object> dataframe = orderedDM.getOrderedDM();
 		DataFrame<Object> dm = dataframe.retain(orderedDM.getLhs().toArray(new Object[orderedDM.getLhs().size()]));
@@ -44,7 +43,7 @@ public class FeasibilityOrderedDM
 		else
 		{
 			keyCluster = "C"+currentCluster;
-			valueCluster = new ArrayList<>();
+			valueCluster = new ObjectArrayList<>();
 			valueCluster.add(lastRow);
 			cProvvisori.put(keyCluster, valueCluster);
 		}
@@ -54,7 +53,7 @@ public class FeasibilityOrderedDM
 			
 			if(currentCluster!=(int)dataframe.get(i, orderedDM.getRhs()))
 			{
-				valueCluster = (ArrayList<Integer>) cProvvisori.get(keyCluster).clone();
+				valueCluster = (ObjectArrayList<Integer>) cProvvisori.get(keyCluster).clone();
 				currentCluster = (int)dataframe.get(i, orderedDM.getRhs());
 			    keyCluster = "C"+currentCluster;
 			    
@@ -128,18 +127,18 @@ public class FeasibilityOrderedDM
 	 * @param dataframe
 	 * @return hashMap dell'insieme c con tuple come identificativo delle righe
 	 */
-	private static HashMap<String,ArrayList<Tuple>> convertHashMapToTuple(HashMap<String,ArrayList<Integer>> cProvvisori, DataFrame<Object> dataframe)
+	private static Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> convertHashMapToTuple(Object2ObjectOpenHashMap<String,ObjectArrayList<Integer>> cProvvisori, DataFrame<Object> dataframe)
 	{
-		HashMap<String,ArrayList<Tuple>> cDefinitivi = new HashMap<>();
+		Object2ObjectOpenHashMap<String,ObjectArrayList<Tuple>> cDefinitivi = new Object2ObjectOpenHashMap<>();
 		
-		ArrayList<String> chiavi=new ArrayList<>();
+		ObjectArrayList<String> chiavi=new ObjectArrayList<>();
 		chiavi.addAll(cProvvisori.keySet());
 		
 		for(int count=0;count<chiavi.size();count++)
 		{
-			ArrayList<Integer> interiC=cProvvisori.get(chiavi.get(count));
+			ObjectArrayList<Integer> interiC=cProvvisori.get(chiavi.get(count));
 			
-			ArrayList<Tuple> insiemeC=new ArrayList<>();
+			ObjectArrayList<Tuple> insiemeC=new ObjectArrayList<>();
 			
 			for(int countJ=0; countJ<interiC.size();countJ++)
 			{
